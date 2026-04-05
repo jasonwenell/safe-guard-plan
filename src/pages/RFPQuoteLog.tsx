@@ -93,6 +93,7 @@ export default function RFPQuoteLog() {
               <thead>
                 <tr className="border-b bg-muted/50">
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground w-[70px]">Case #</th>
+                  <th className="text-center py-2.5 px-3 text-xs font-medium text-muted-foreground w-[50px]" title="AI Quotability Score">QS</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground">Status</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground w-[60px]">Type</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground">Group Name</th>
