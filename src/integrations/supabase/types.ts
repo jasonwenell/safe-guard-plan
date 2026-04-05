@@ -14,7 +14,184 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      extracted_fields: {
+        Row: {
+          accepted: boolean
+          confidence: number
+          created_at: string
+          document_id: string
+          field_name: string
+          id: string
+          source_location: string | null
+          value: string
+        }
+        Insert: {
+          accepted?: boolean
+          confidence?: number
+          created_at?: string
+          document_id: string
+          field_name: string
+          id?: string
+          source_location?: string | null
+          value: string
+        }
+        Update: {
+          accepted?: boolean
+          confidence?: number
+          created_at?: string
+          document_id?: string
+          field_name?: string
+          id?: string
+          source_location?: string | null
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_fields_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "intake_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_documents: {
+        Row: {
+          ai_classification_confidence: number | null
+          ai_classified_type:
+            | Database["public"]["Enums"]["document_type"]
+            | null
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          email_id: string | null
+          errors: string[] | null
+          file_name: string
+          file_path: string | null
+          file_size: number
+          file_type: string
+          id: string
+          page_count: number | null
+          processing_progress: number | null
+          processing_status: Database["public"]["Enums"]["document_processing_status"]
+          rfp_id: string | null
+          updated_at: string
+          upload_source: string
+        }
+        Insert: {
+          ai_classification_confidence?: number | null
+          ai_classified_type?:
+            | Database["public"]["Enums"]["document_type"]
+            | null
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          email_id?: string | null
+          errors?: string[] | null
+          file_name: string
+          file_path?: string | null
+          file_size?: number
+          file_type: string
+          id?: string
+          page_count?: number | null
+          processing_progress?: number | null
+          processing_status?: Database["public"]["Enums"]["document_processing_status"]
+          rfp_id?: string | null
+          updated_at?: string
+          upload_source?: string
+        }
+        Update: {
+          ai_classification_confidence?: number | null
+          ai_classified_type?:
+            | Database["public"]["Enums"]["document_type"]
+            | null
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          email_id?: string | null
+          errors?: string[] | null
+          file_name?: string
+          file_path?: string | null
+          file_size?: number
+          file_type?: string
+          id?: string
+          page_count?: number | null
+          processing_progress?: number | null
+          processing_status?: Database["public"]["Enums"]["document_processing_status"]
+          rfp_id?: string | null
+          updated_at?: string
+          upload_source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_documents_email_id_fkey"
+            columns: ["email_id"]
+            isOneToOne: false
+            referencedRelation: "intake_emails"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_emails: {
+        Row: {
+          ai_summary: string | null
+          attachment_count: number
+          body_preview: string | null
+          cc_addresses: string[] | null
+          created_at: string
+          from_address: string
+          from_name: string | null
+          group_detected: string | null
+          id: string
+          processing_status: Database["public"]["Enums"]["email_processing_status"]
+          received_at: string
+          rfp_id: string | null
+          subject: string
+          thread_count: number | null
+          thread_id: string | null
+          to_address: string | null
+          tpa_detected: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          attachment_count?: number
+          body_preview?: string | null
+          cc_addresses?: string[] | null
+          created_at?: string
+          from_address: string
+          from_name?: string | null
+          group_detected?: string | null
+          id?: string
+          processing_status?: Database["public"]["Enums"]["email_processing_status"]
+          received_at?: string
+          rfp_id?: string | null
+          subject: string
+          thread_count?: number | null
+          thread_id?: string | null
+          to_address?: string | null
+          tpa_detected?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_summary?: string | null
+          attachment_count?: number
+          body_preview?: string | null
+          cc_addresses?: string[] | null
+          created_at?: string
+          from_address?: string
+          from_name?: string | null
+          group_detected?: string | null
+          id?: string
+          processing_status?: Database["public"]["Enums"]["email_processing_status"]
+          received_at?: string
+          rfp_id?: string | null
+          subject?: string
+          thread_count?: number | null
+          thread_id?: string | null
+          to_address?: string | null
+          tpa_detected?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +200,28 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      document_processing_status:
+        | "queued"
+        | "classifying"
+        | "extracting"
+        | "review"
+        | "accepted"
+        | "rejected"
+        | "error"
+      document_type:
+        | "census"
+        | "sob"
+        | "experience"
+        | "application"
+        | "rfp_letter"
+        | "id_cards"
+        | "unknown"
+      email_processing_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "skipped"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +348,32 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      document_processing_status: [
+        "queued",
+        "classifying",
+        "extracting",
+        "review",
+        "accepted",
+        "rejected",
+        "error",
+      ],
+      document_type: [
+        "census",
+        "sob",
+        "experience",
+        "application",
+        "rfp_letter",
+        "id_cards",
+        "unknown",
+      ],
+      email_processing_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "skipped",
+      ],
+    },
   },
 } as const
