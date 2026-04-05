@@ -191,7 +191,7 @@ export default function Proposals() {
               <label className="text-sm font-medium text-foreground mb-1.5 block">Select Case</label>
               <Select value={selectedRfp} onValueChange={setSelectedRfp}>
                 <SelectTrigger><SelectValue placeholder="Choose a quoted RFP..." /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[200]" position="popper" sideOffset={4}>
                   {quotedRfps.map(r => (
                     <SelectItem key={r.id} value={r.id}>
                       #{r.caseNumber} — {r.groupName}
