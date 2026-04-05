@@ -13,6 +13,7 @@ import DocumentUpload from "./pages/DocumentUpload";
 import CensusProcessing from "./pages/CensusProcessing";
 import PlanDesign from "./pages/PlanDesign";
 import RatingEngine from "./pages/RatingEngine";
+import AIUnderwriting from "./pages/AIUnderwriting";
 import Proposals from "./pages/Proposals";
 import PolicyAdmin from "./pages/PolicyAdmin";
 import Renewals from "./pages/Renewals";
