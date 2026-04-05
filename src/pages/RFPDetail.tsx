@@ -276,7 +276,7 @@ export default function RFPDetail() {
             <Separator />
             <div className="space-y-1.5">
               <Label className="text-xs">Setup Notes</Label>
-              <Textarea defaultValue={rfp?.notes ?? ''} placeholder="Notes about setup progress, missing items, etc." rows={3} />
+              <Textarea defaultValue={rfp?.setupNotes ?? ''} placeholder="Notes about setup progress, missing items, etc." rows={3} />
             </div>
           </CardContent>
         </Card>
