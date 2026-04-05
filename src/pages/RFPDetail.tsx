@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,10 +10,16 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Save, Upload, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
+import { MOCK_RFPS, MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
+import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
+import { STATUS_LABELS } from '@/types/sleq';
 
 export default function RFPDetail() {
-  const [isRush, setIsRush] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const rfp = id ? MOCK_RFPS.find(r => r.id === id) : null;
+  const isNew = !rfp;
+
+  const [isRush, setIsRush] = useState(rfp?.isRush ?? false);
 
   return (
     <div className="p-6 space-y-6 max-w-[1200px]">
@@ -21,8 +28,19 @@ export default function RFPDetail() {
           <Button variant="ghost" size="sm"><ArrowLeft className="w-4 h-4" /></Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">New RFP</h1>
-          <p className="text-sm text-muted-foreground">Create a new quote request</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            {isNew ? 'New RFP' : `Case ${rfp.caseNumber}`}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {isNew ? 'Create a new quote request' : (
+              <span className="flex items-center gap-2">
+                {rfp.groupName}
+                <StatusBadge status={rfp.status} />
+                <TypeBadge type={rfp.type} />
+                {rfp.isRush && <RushBadge />}
+              </span>
+            )}
+          </p>
         </div>
         <div className="ml-auto flex gap-2">
           <Button variant="outline" className="gap-2">
@@ -38,7 +56,11 @@ export default function RFPDetail() {
       <div className="bg-ai-bg border border-amber-200 rounded-lg px-4 py-3 flex items-center gap-3">
         <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-medium text-amber-800">AI auto-populated 0 fields from 0 documents. Upload documents to extract data automatically.</p>
+          <p className="text-sm font-medium text-amber-800">
+            {isNew
+              ? 'AI auto-populated 0 fields from 0 documents. Upload documents to extract data automatically.'
+              : `AI auto-populated fields from intake. Review highlighted values below.`}
+          </p>
         </div>
         <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100">Accept All</Button>
       </div>
@@ -52,7 +74,7 @@ export default function RFPDetail() {
           <CardContent className="space-y-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Group Name *</Label>
-              <Input placeholder="Enter group name (fuzzy search active)" />
+              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" />
               <p className="text-[10px] text-muted-foreground">No # or / characters. Typing triggers duplicate/renewal detection.</p>
             </div>
             <div className="space-y-1.5">
@@ -62,25 +84,25 @@ export default function RFPDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">SIC Code *</Label>
-                <Input placeholder="e.g. 3559" />
+                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">SIC Description</Label>
-                <Input readOnly placeholder="Auto-populated" className="bg-muted/50" />
+                <Input readOnly defaultValue={rfp?.sicDescription ?? ''} placeholder="Auto-populated" className="bg-muted/50" />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Situs ZIP *</Label>
-                <Input placeholder="55401" />
+                <Input defaultValue={rfp?.situsZip ?? ''} placeholder="55401" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">State</Label>
-                <Input readOnly placeholder="Auto" className="bg-muted/50" />
+                <Input readOnly defaultValue={rfp?.situsState ?? ''} placeholder="Auto" className="bg-muted/50" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Employees</Label>
-                <Input type="number" placeholder="0" />
+                <Input type="number" defaultValue={rfp?.employeeCount ?? ''} placeholder="0" />
               </div>
             </div>
           </CardContent>
@@ -94,7 +116,7 @@ export default function RFPDetail() {
           <CardContent className="space-y-4">
             <div className="space-y-1.5">
               <Label className="text-xs">TPA *</Label>
-              <Select>
+              <Select defaultValue={rfp?.tpaId ?? undefined}>
                 <SelectTrigger><SelectValue placeholder="Type to search TPA..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_TPAS.filter(t => t.isActive).map(t => (
@@ -105,7 +127,7 @@ export default function RFPDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Producer *</Label>
-              <Select>
+              <Select defaultValue={rfp?.producerId ?? undefined}>
                 <SelectTrigger><SelectValue placeholder="Type to search Producer..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_PRODUCERS.filter(p => p.isActive).map(p => (
@@ -116,7 +138,7 @@ export default function RFPDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Carrier *</Label>
-              <Select defaultValue="c1">
+              <Select defaultValue={rfp?.carrierId ?? 'c1'}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {MOCK_CARRIERS.map(c => (
@@ -127,7 +149,7 @@ export default function RFPDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Contact</Label>
-              <Input placeholder="Contact name" />
+              <Input defaultValue={rfp?.producerName ?? ''} placeholder="Contact name" />
             </div>
           </CardContent>
         </Card>
@@ -141,17 +163,17 @@ export default function RFPDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Effective Date *</Label>
-                <Input type="date" />
+                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Received Date</Label>
-                <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} readOnly className="bg-muted/50" />
+                <Input type="date" defaultValue={rfp?.requestDate ?? new Date().toISOString().split('T')[0]} readOnly className="bg-muted/50" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Request Date</Label>
-                <Input type="date" readOnly className="bg-muted/50" placeholder="Auto-calculated" />
+                <Input type="date" defaultValue={rfp?.requestDate ?? ''} readOnly className="bg-muted/50" placeholder="Auto-calculated" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">TPAC Date</Label>
@@ -162,7 +184,7 @@ export default function RFPDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Type *</Label>
-                <Select defaultValue="NEW">
+                <Select defaultValue={rfp?.type ?? 'NEW'}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="NEW">New Business</SelectItem>
@@ -177,7 +199,7 @@ export default function RFPDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Assigned Underwriter</Label>
-              <Select>
+              <Select defaultValue={rfp?.assignedUWId ?? undefined}>
                 <SelectTrigger><SelectValue placeholder="Select UW by TPA..." /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="u3">Juice Montezon</SelectItem>
@@ -199,7 +221,7 @@ export default function RFPDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Census Status</Label>
-                <Select defaultValue="waiting">
+                <Select defaultValue={rfp?.censusStatus ?? 'waiting'}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="waiting">Waiting</SelectItem>
@@ -214,7 +236,7 @@ export default function RFPDetail() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Risk Assessment</Label>
-                <Select defaultValue="not_started">
+                <Select defaultValue={rfp?.riskAssessmentStatus ?? 'not_started'}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="not_started">Not Started</SelectItem>
@@ -228,7 +250,7 @@ export default function RFPDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Summary of Benefits</Label>
-                <Select defaultValue="not_started">
+                <Select defaultValue={rfp?.sobStatus ?? 'not_started'}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="not_started">Not Started</SelectItem>
@@ -240,7 +262,7 @@ export default function RFPDetail() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Rating System</Label>
-                <Select defaultValue="not_started">
+                <Select defaultValue={rfp?.ratingSystemStatus ?? 'not_started'}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="not_started">Not Started</SelectItem>
@@ -254,7 +276,7 @@ export default function RFPDetail() {
             <Separator />
             <div className="space-y-1.5">
               <Label className="text-xs">Setup Notes</Label>
-              <Textarea placeholder="Notes about setup progress, missing items, etc." rows={3} />
+              <Textarea defaultValue={rfp?.notes ?? ''} placeholder="Notes about setup progress, missing items, etc." rows={3} />
             </div>
           </CardContent>
         </Card>
