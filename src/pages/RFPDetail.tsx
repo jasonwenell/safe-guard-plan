@@ -98,7 +98,7 @@ export default function RFPDetail() {
               : `AI auto-populated fields from intake. Review highlighted values below.`}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100">Accept All</Button>
+        <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100" onClick={acceptAll}>Accept All</Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
