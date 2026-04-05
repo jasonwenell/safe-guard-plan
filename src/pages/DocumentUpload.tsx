@@ -1,0 +1,357 @@
+import { useState } from 'react';
+import { MOCK_MANUAL_DOCUMENTS, MOCK_RFPS } from '@/data/mockData';
+import { DOCUMENT_TYPE_LABELS, DOCUMENT_STATUS_LABELS } from '@/types/sleq';
+import type { IntakeDocument } from '@/types/sleq';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import {
+  Upload, Search, FileText, FileSpreadsheet, Sparkles, Check, X, Eye,
+  Clock, AlertTriangle, CheckCircle2, Loader2, FolderOpen, Filter
+} from 'lucide-react';
+
+const docStatusConfig: Record<string, { color: string; icon: typeof Check }> = {
+  queued: { color: 'bg-muted text-muted-foreground', icon: Clock },
+  classifying: { color: 'bg-info/15 text-info border border-info/30', icon: Loader2 },
+  extracting: { color: 'bg-primary/15 text-primary border border-primary/30', icon: Loader2 },
+  review: { color: 'bg-warning/15 text-warning border border-warning/30', icon: AlertTriangle },
+  accepted: { color: 'bg-success/15 text-success border border-success/30', icon: CheckCircle2 },
+  rejected: { color: 'bg-destructive/15 text-destructive border border-destructive/30', icon: X },
+  error: { color: 'bg-destructive/15 text-destructive border border-destructive/30', icon: AlertTriangle },
+};
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
+function ConfidenceBar({ confidence }: { confidence: number }) {
+  const pct = Math.round(confidence * 100);
+  const color = pct >= 90 ? 'bg-success' : pct >= 75 ? 'bg-warning' : 'bg-destructive';
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-16 rounded-full bg-muted overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      <span className="text-[10px] font-mono text-muted-foreground">{pct}%</span>
+    </div>
+  );
+}
+
+export default function DocumentUpload() {
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [selectedDoc, setSelectedDoc] = useState<IntakeDocument | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const allDocs = MOCK_MANUAL_DOCUMENTS;
+  const filtered = allDocs.filter(d => {
+    const matchSearch = search === '' || d.fileName.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'all' || d.processingStatus === statusFilter;
+    const matchType = typeFilter === 'all' || d.documentType === typeFilter;
+    return matchSearch && matchStatus && matchType;
+  });
+
+  const stats = {
+    total: allDocs.length,
+    accepted: allDocs.filter(d => d.processingStatus === 'accepted').length,
+    review: allDocs.filter(d => d.processingStatus === 'review').length,
+    error: allDocs.filter(d => d.processingStatus === 'error').length,
+    processing: allDocs.filter(d => ['queued', 'classifying', 'extracting'].includes(d.processingStatus)).length,
+  };
+
+  return (
+    <div className="p-6 space-y-4 max-w-[1600px]">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Document Upload</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Upload and process documents with AI classification & extraction</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2"><FolderOpen className="w-4 h-4" /> Browse Files</Button>
+        </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-5 gap-3">
+        {[
+          { label: 'Total', value: stats.total, color: 'text-foreground' },
+          { label: 'Accepted', value: stats.accepted, color: 'text-success' },
+          { label: 'Needs Review', value: stats.review, color: 'text-warning' },
+          { label: 'Errors', value: stats.error, color: 'text-destructive' },
+          { label: 'Processing', value: stats.processing, color: 'text-info' },
+        ].map(s => (
+          <Card key={s.label} className="border shadow-sm">
+            <CardContent className="p-3 text-center">
+              <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Upload Zone */}
+      <Card className="border shadow-sm">
+        <CardContent className="p-0">
+          <div
+            onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+            onDragLeave={() => setIsDragOver(false)}
+            onDrop={(e) => { e.preventDefault(); setIsDragOver(false); }}
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${
+              isDragOver
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:border-primary/50'
+            }`}
+          >
+            <Upload className={`w-10 h-10 mx-auto mb-3 ${isDragOver ? 'text-primary' : 'text-muted-foreground'}`} />
+            <p className="text-sm font-medium text-foreground">Drop files here or click to browse</p>
+            <p className="text-xs text-muted-foreground mt-1">Supports PDF, XLSX, CSV, DOCX, MSG — up to 50MB each</p>
+            <p className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
+              <Sparkles className="w-3 h-3 text-amber-600" />
+              AI will automatically classify document type and extract key data
+            </p>
+            <div className="flex justify-center gap-3 mt-4">
+              <Button className="gap-2">
+                <Upload className="w-4 h-4" /> Upload Files
+              </Button>
+              <Button variant="outline" className="gap-2">
+                <Sparkles className="w-4 h-4" /> Bulk Process
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left: Document List */}
+        <div className="lg:col-span-2 space-y-3">
+          {/* Filters */}
+          <Card className="border shadow-sm">
+            <CardContent className="p-3 flex flex-wrap gap-3 items-center">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input placeholder="Search documents..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[140px] h-9"><SelectValue placeholder="All Statuses" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="queued">Queued</SelectItem>
+                  <SelectItem value="classifying">Classifying</SelectItem>
+                  <SelectItem value="extracting">Extracting</SelectItem>
+                  <SelectItem value="review">Needs Review</SelectItem>
+                  <SelectItem value="accepted">Accepted</SelectItem>
+                  <SelectItem value="error">Error</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-[150px] h-9"><SelectValue placeholder="All Types" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="census">Census</SelectItem>
+                  <SelectItem value="sob">Summary of Benefits</SelectItem>
+                  <SelectItem value="experience">Experience/Claims</SelectItem>
+                  <SelectItem value="application">Application</SelectItem>
+                  <SelectItem value="rfp_letter">RFP Letter</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
+                </SelectContent>
+              </Select>
+            </CardContent>
+          </Card>
+
+          {/* Document Cards */}
+          <div className="space-y-2">
+            {filtered.map(doc => {
+              const sc = docStatusConfig[doc.processingStatus] || docStatusConfig.queued;
+              const Icon = sc.icon;
+              const FileIcon = doc.fileType === 'xlsx' || doc.fileType === 'csv' ? FileSpreadsheet : FileText;
+              const isProcessing = doc.processingStatus === 'classifying' || doc.processingStatus === 'extracting';
+              const linkedRfp = doc.rfpId ? MOCK_RFPS.find(r => r.id === doc.rfpId) : null;
+
+              return (
+                <Card
+                  key={doc.id}
+                  className={`border shadow-sm cursor-pointer transition-all hover:border-primary/30 ${selectedDoc?.id === doc.id ? 'border-primary ring-1 ring-primary/20' : ''}`}
+                  onClick={() => setSelectedDoc(doc)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                        <FileIcon className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium text-foreground truncate">{doc.fileName}</p>
+                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${sc.color}`}>
+                            <Icon className={`w-3 h-3 ${isProcessing ? 'animate-spin' : ''}`} />
+                            {DOCUMENT_STATUS_LABELS[doc.processingStatus]}
+                          </span>
+                          {doc.aiClassifiedType && (
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-ai-bg text-amber-700 rounded border border-amber-200 text-[10px]">
+                              ✨ {DOCUMENT_TYPE_LABELS[doc.aiClassifiedType]}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground">
+                          <span>{formatFileSize(doc.fileSize)}</span>
+                          <span>{doc.fileType.toUpperCase()}</span>
+                          {doc.pageCount && <span>{doc.pageCount} pages</span>}
+                          <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                          {linkedRfp && (
+                            <span className="text-primary">Case #{linkedRfp.caseNumber}</span>
+                          )}
+                        </div>
+                        {isProcessing && doc.processingProgress != null && (
+                          <Progress value={doc.processingProgress} className="h-1 mt-2" />
+                        )}
+                        {doc.errors && doc.errors.length > 0 && (
+                          <p className="text-[10px] text-destructive mt-1 truncate">{doc.errors[0]}</p>
+                        )}
+                      </div>
+                      {doc.extractedFields && (
+                        <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-2 py-0.5 shrink-0">
+                          {doc.extractedFields.length} fields
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            {filtered.length === 0 && (
+              <Card className="border shadow-sm">
+                <CardContent className="p-8 text-center text-muted-foreground text-sm">
+                  No documents match your filters
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Detail Panel */}
+        <div className="space-y-4">
+          {selectedDoc ? (
+            <Card className="border shadow-sm sticky top-4">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-semibold">Document Details</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={() => setSelectedDoc(null)}><X className="w-4 h-4" /></Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* File info */}
+                <div className="flex items-center gap-3">
+                  {(selectedDoc.fileType === 'xlsx' || selectedDoc.fileType === 'csv') ? (
+                    <FileSpreadsheet className="w-8 h-8 text-muted-foreground" />
+                  ) : (
+                    <FileText className="w-8 h-8 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{selectedDoc.fileName}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatFileSize(selectedDoc.fileSize)} • {selectedDoc.pageCount} pages • {selectedDoc.fileType.toUpperCase()}</p>
+                  </div>
+                </div>
+
+                {/* AI Classification */}
+                {selectedDoc.aiClassifiedType && (
+                  <>
+                    <Separator />
+                    <div>
+                      <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-600" /> AI Classification
+                      </p>
+                      <div className="flex items-center justify-between bg-ai-bg rounded px-3 py-2 border border-amber-200">
+                        <span className="text-xs font-medium text-amber-800">{DOCUMENT_TYPE_LABELS[selectedDoc.aiClassifiedType]}</span>
+                        {selectedDoc.aiClassificationConfidence && <ConfidenceBar confidence={selectedDoc.aiClassificationConfidence} />}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Extracted Fields */}
+                {selectedDoc.extractedFields && selectedDoc.extractedFields.length > 0 && (
+                  <>
+                    <Separator />
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-medium text-foreground">Extracted Data</p>
+                        <Button size="sm" variant="outline" className="h-6 text-[10px] gap-1">
+                          <Check className="w-3 h-3" /> Accept All
+                        </Button>
+                      </div>
+                      <div className="space-y-1.5">
+                        {selectedDoc.extractedFields.map((f, i) => (
+                          <div key={i} className={`rounded px-2 py-1.5 text-xs ${f.accepted ? 'bg-success/5 border border-success/20' : 'bg-muted/50'}`}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                {f.accepted ? (
+                                  <CheckCircle2 className="w-3 h-3 text-success shrink-0" />
+                                ) : (
+                                  <div className="w-3 h-3 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                                )}
+                                <span className="text-muted-foreground">{f.fieldName}</span>
+                              </div>
+                              <ConfidenceBar confidence={f.confidence} />
+                            </div>
+                            <p className="font-medium text-foreground mt-0.5 ml-4.5 pl-1">{f.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Errors */}
+                {selectedDoc.errors && selectedDoc.errors.length > 0 && (
+                  <>
+                    <Separator />
+                    <div>
+                      <p className="text-xs font-medium text-destructive mb-2">Processing Errors</p>
+                      {selectedDoc.errors.map((e, i) => (
+                        <p key={i} className="text-xs text-destructive/80 bg-destructive/10 rounded px-2 py-1.5 mb-1">{e}</p>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Actions */}
+                <Separator />
+                <div className="flex flex-col gap-2">
+                  <Button size="sm" variant="outline" className="w-full gap-1 text-xs"><Eye className="w-3 h-3" /> Preview Document</Button>
+                  {selectedDoc.processingStatus === 'review' && (
+                    <Button size="sm" className="w-full gap-1 text-xs"><Check className="w-3 h-3" /> Accept Extraction</Button>
+                  )}
+                  {selectedDoc.processingStatus === 'error' && (
+                    <Button size="sm" className="w-full gap-1 text-xs"><Sparkles className="w-3 h-3" /> Retry Processing</Button>
+                  )}
+                  {selectedDoc.processingStatus === 'queued' && (
+                    <Button size="sm" className="w-full gap-1 text-xs"><Sparkles className="w-3 h-3" /> Process Now</Button>
+                  )}
+                  {selectedDoc.rfpId && (
+                    <Button size="sm" variant="outline" className="w-full gap-1 text-xs">
+                      <Eye className="w-3 h-3" /> View Linked RFP
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border shadow-sm">
+              <CardContent className="p-8 text-center">
+                <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Select a document to view details</p>
+                <p className="text-xs text-muted-foreground mt-1">AI classification and extracted data will appear here</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

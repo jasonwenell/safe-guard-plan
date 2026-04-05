@@ -42,6 +42,49 @@ export enum SetupTaskStatus {
   VERIFIED = 'verified',
 }
 
+export type DocumentType = 'census' | 'sob' | 'experience' | 'application' | 'rfp_letter' | 'id_cards' | 'unknown';
+export type DocumentProcessingStatus = 'queued' | 'classifying' | 'extracting' | 'review' | 'accepted' | 'rejected' | 'error';
+
+export interface IntakeDocument {
+  id: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string;
+  uploadSource: 'email' | 'manual';
+  emailId?: string;
+  rfpId?: string;
+  documentType: DocumentType;
+  aiClassifiedType?: DocumentType;
+  aiClassificationConfidence?: number;
+  processingStatus: DocumentProcessingStatus;
+  processingProgress?: number;
+  extractedFields?: ExtractedField[];
+  pageCount?: number;
+  errors?: string[];
+}
+
+export interface ExtractedField {
+  fieldName: string;
+  value: string;
+  confidence: number;
+  sourceLocation?: string; // e.g. "Page 1, Row 3"
+  accepted: boolean;
+}
+
+export interface EmailDetail extends EmailInbox {
+  bodyPreview: string;
+  bodyHtml?: string;
+  toAddress: string;
+  ccAddresses?: string[];
+  documents: IntakeDocument[];
+  aiSummary?: string;
+  aiExtractedFields?: ExtractedField[];
+  linkedRfpId?: string;
+  threadId?: string;
+  threadCount?: number;
+}
+
 export interface Carrier {
   id: string;
   code: string;
@@ -210,4 +253,24 @@ export const SETUP_STATUS_LABELS: Record<SetupTaskStatus, string> = {
   [SetupTaskStatus.RECEIVED]: 'Received',
   [SetupTaskStatus.ENTERED]: 'Entered',
   [SetupTaskStatus.VERIFIED]: 'Verified',
+};
+
+export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
+  census: 'Census',
+  sob: 'Summary of Benefits',
+  experience: 'Experience/Claims',
+  application: 'Application',
+  rfp_letter: 'RFP Letter',
+  id_cards: 'ID Cards',
+  unknown: 'Unknown',
+};
+
+export const DOCUMENT_STATUS_LABELS: Record<DocumentProcessingStatus, string> = {
+  queued: 'Queued',
+  classifying: 'Classifying',
+  extracting: 'Extracting',
+  review: 'Needs Review',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+  error: 'Error',
 };
