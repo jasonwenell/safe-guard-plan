@@ -1,4 +1,4 @@
-import { RFP, RFPStatus, CensusReadyStatus, SetupTaskStatus, EmailInbox, Policy, DashboardStats, Carrier, TPA, Producer, CensusMember, Scenario } from '@/types/sleq';
+import { RFP, RFPStatus, CensusReadyStatus, SetupTaskStatus, EmailInbox, Policy, DashboardStats, Carrier, TPA, Producer, CensusMember, Scenario, IntakeDocument, EmailDetail, ExtractedField } from '@/types/sleq';
 
 export const MOCK_CARRIERS: Carrier[] = [
   { id: 'c1', code: 'PANAM', name: 'Pan American', isActive: true, quotableStates: ['AL','AZ','AR','CO','FL','GA','IL','IN','IA','KS','KY','LA','MI','MN','MS','MO','NE','NC','OH','OK','OR','PA','SC','TN','TX','UT','VA','WI'] },
@@ -148,6 +148,310 @@ export const MOCK_EMAILS: EmailInbox[] = [
   { id: 'e4', fromAddress: 'tom@evergreentpa.com', fromName: 'Tom Wilson', subject: 'FW: Census & SoB - Valley Tech Solutions', receivedAt: '2026-04-05T10:45:00Z', processingStatus: 'pending', attachmentCount: 5 },
   { id: 'e5', fromAddress: 'lisa@sbstpa.com', fromName: 'Lisa Chen', subject: 'Re: Quote Request - Mountain View Medical Group', receivedAt: '2026-04-05T11:30:00Z', processingStatus: 'processing', tpaDetected: 'SBS', attachmentCount: 2 },
   { id: 'e6', fromAddress: 'noreply@marketingco.com', fromName: 'Marketing Updates', subject: 'Your Weekly Newsletter', receivedAt: '2026-04-05T07:00:00Z', processingStatus: 'skipped', attachmentCount: 0 },
+];
+
+// Extended email detail data
+export const MOCK_EMAIL_DETAILS: EmailDetail[] = [
+  {
+    id: 'e1', fromAddress: 'jsmith@asrhealthbenefits.com', fromName: 'Jane Smith',
+    subject: 'RFP - Midwest Manufacturing Corp - 7/1/2026 Effective',
+    receivedAt: '2026-04-05T08:30:00Z', processingStatus: 'completed',
+    tpaDetected: 'ASR', groupDetected: 'Midwest Manufacturing Corp',
+    attachmentCount: 3, rfpId: 'rfp-001',
+    toAddress: 'quotes@tpac.com',
+    ccAddresses: ['underwriting@tpac.com'],
+    bodyPreview: `Hi Team,\n\nPlease find attached the RFP for Midwest Manufacturing Corp with an effective date of 7/1/2026.\n\nGroup Details:\n- Group Name: Midwest Manufacturing Corp\n- SIC Code: 3559\n- Situs State: Minnesota\n- Eligible Employees: 285\n- Current Carrier: Blue Cross Blue Shield\n\nAttached documents:\n1. Census file (Excel)\n2. Summary of Benefits\n3. RFP Letter with quote specifications\n\nPlease let me know if you need any additional information.\n\nBest regards,\nJane Smith\nASR Health Benefits`,
+    aiSummary: 'New business RFP from ASR Health Benefits for Midwest Manufacturing Corp, a 285-employee manufacturing company in Minnesota. Effective date 7/1/2026. Three documents attached: census, SoB, and RFP letter. Group currently with BCBS. SIC 3559 (Special Industry Machinery).',
+    aiExtractedFields: [
+      { fieldName: 'Group Name', value: 'Midwest Manufacturing Corp', confidence: 0.98, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'TPA', value: 'ASR Health Benefits', confidence: 0.99, sourceLocation: 'Sender Domain', accepted: true },
+      { fieldName: 'Effective Date', value: '2026-07-01', confidence: 0.95, sourceLocation: 'Subject Line', accepted: true },
+      { fieldName: 'SIC Code', value: '3559', confidence: 0.92, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'State', value: 'MN', confidence: 0.90, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'Employee Count', value: '285', confidence: 0.94, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'Current Carrier', value: 'Blue Cross Blue Shield', confidence: 0.88, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'Quote Type', value: 'New Business', confidence: 0.85, sourceLocation: 'Inferred', accepted: true },
+    ],
+    documents: [
+      {
+        id: 'doc-e1-1', fileName: 'Midwest_Mfg_Census_2026.xlsx', fileType: 'xlsx', fileSize: 245000,
+        uploadedAt: '2026-04-05T08:30:00Z', uploadSource: 'email', emailId: 'e1', rfpId: 'rfp-001',
+        documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.97,
+        processingStatus: 'accepted', processingProgress: 100, pageCount: 3,
+        extractedFields: [
+          { fieldName: 'Total Rows', value: '285', confidence: 0.99, accepted: true },
+          { fieldName: 'Columns Found', value: 'Name, DOB, Gender, ZIP, Relationship, Plan, Tier', confidence: 0.95, accepted: true },
+          { fieldName: 'Coverage Tiers', value: 'EE, EE+SP, EE+CH, FAM', confidence: 0.92, accepted: true },
+        ],
+      },
+      {
+        id: 'doc-e1-2', fileName: 'Midwest_Mfg_SoB.pdf', fileType: 'pdf', fileSize: 1200000,
+        uploadedAt: '2026-04-05T08:30:00Z', uploadSource: 'email', emailId: 'e1', rfpId: 'rfp-001',
+        documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.94,
+        processingStatus: 'accepted', processingProgress: 100, pageCount: 12,
+        extractedFields: [
+          { fieldName: 'Plan Types', value: 'Gold PPO, Silver HDHP', confidence: 0.91, accepted: true },
+          { fieldName: 'Deductible (PPO)', value: '$500/$1,000', confidence: 0.88, accepted: true },
+          { fieldName: 'Deductible (HDHP)', value: '$2,800/$5,600', confidence: 0.90, accepted: true },
+          { fieldName: 'OOP Max (PPO)', value: '$4,000/$8,000', confidence: 0.87, accepted: true },
+          { fieldName: 'Rx Coverage', value: '$10/$30/$50', confidence: 0.85, accepted: true },
+        ],
+      },
+      {
+        id: 'doc-e1-3', fileName: 'RFP_Letter_Midwest.pdf', fileType: 'pdf', fileSize: 89000,
+        uploadedAt: '2026-04-05T08:30:00Z', uploadSource: 'email', emailId: 'e1', rfpId: 'rfp-001',
+        documentType: 'rfp_letter', aiClassifiedType: 'rfp_letter', aiClassificationConfidence: 0.96,
+        processingStatus: 'accepted', processingProgress: 100, pageCount: 2,
+        extractedFields: [
+          { fieldName: 'Specific Deductible Requested', value: '$50,000 / $75,000 / $100,000', confidence: 0.93, accepted: true },
+          { fieldName: 'Contract Basis', value: '12/12 and 12/15', confidence: 0.90, accepted: true },
+          { fieldName: 'Aggregate Requested', value: 'Yes', confidence: 0.88, accepted: true },
+        ],
+      },
+    ],
+    linkedRfpId: 'rfp-001',
+    threadId: 'thread-001',
+    threadCount: 1,
+  },
+  {
+    id: 'e2', fromAddress: 'mike@jpfarley.com', fromName: 'Mike Johnson',
+    subject: 'New Quote Request - Standard Printing Co - 10/1 eff',
+    receivedAt: '2026-04-05T09:15:00Z', processingStatus: 'completed',
+    tpaDetected: 'JPF', groupDetected: 'Standard Printing Co',
+    attachmentCount: 2, rfpId: 'rfp-004',
+    toAddress: 'quotes@tpac.com',
+    bodyPreview: `Good morning,\n\nWe'd like to request a stop-loss quote for Standard Printing Co.\n\n- Group: Standard Printing Co\n- SIC: 2752 (Commercial Printing)\n- Location: Chicago, IL\n- Employees: 67\n- Effective: 10/1/2026\n\nCensus and Summary of Benefits attached.\n\nThanks,\nMike Johnson\nJP Farley Corporation`,
+    aiSummary: 'New business quote request from JP Farley for Standard Printing Co, 67 employees in Illinois. Effective 10/1/2026. Census and SoB attached.',
+    aiExtractedFields: [
+      { fieldName: 'Group Name', value: 'Standard Printing Co', confidence: 0.97, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'TPA', value: 'JP Farley Corporation', confidence: 0.99, sourceLocation: 'Sender Domain', accepted: true },
+      { fieldName: 'Effective Date', value: '2026-10-01', confidence: 0.93, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'SIC Code', value: '2752', confidence: 0.91, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'State', value: 'IL', confidence: 0.89, sourceLocation: 'Email Body', accepted: true },
+      { fieldName: 'Employee Count', value: '67', confidence: 0.95, sourceLocation: 'Email Body', accepted: true },
+    ],
+    documents: [
+      {
+        id: 'doc-e2-1', fileName: 'StandardPrinting_Census.xlsx', fileType: 'xlsx', fileSize: 98000,
+        uploadedAt: '2026-04-05T09:15:00Z', uploadSource: 'email', emailId: 'e2', rfpId: 'rfp-004',
+        documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.95,
+        processingStatus: 'accepted', processingProgress: 100, pageCount: 1,
+        extractedFields: [
+          { fieldName: 'Total Rows', value: '67', confidence: 0.99, accepted: true },
+          { fieldName: 'Columns Found', value: 'Name, DOB, Gender, ZIP, Tier', confidence: 0.90, accepted: true },
+        ],
+      },
+      {
+        id: 'doc-e2-2', fileName: 'StandardPrinting_SoB.pdf', fileType: 'pdf', fileSize: 850000,
+        uploadedAt: '2026-04-05T09:15:00Z', uploadSource: 'email', emailId: 'e2', rfpId: 'rfp-004',
+        documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.92,
+        processingStatus: 'review', processingProgress: 100, pageCount: 8,
+        extractedFields: [
+          { fieldName: 'Plan Type', value: 'PPO', confidence: 0.88, accepted: false },
+          { fieldName: 'Deductible', value: '$750/$1,500', confidence: 0.82, accepted: false },
+          { fieldName: 'OOP Max', value: '$5,000/$10,000', confidence: 0.79, accepted: false },
+        ],
+      },
+    ],
+    linkedRfpId: 'rfp-004',
+    threadId: 'thread-002',
+    threadCount: 1,
+  },
+  {
+    id: 'e3', fromAddress: 'sarah@mhstpa.com', fromName: 'Sarah Davis',
+    subject: 'Quote Needed ASAP - Rocky Mountain Resorts - Nov 1 Effective',
+    receivedAt: '2026-04-05T10:00:00Z', processingStatus: 'pending',
+    tpaDetected: 'MHS', groupDetected: 'Rocky Mountain Resorts Inc',
+    attachmentCount: 4,
+    toAddress: 'quotes@tpac.com',
+    ccAddresses: ['urgent@tpac.com'],
+    bodyPreview: `URGENT REQUEST\n\nWe need a rush quote for Rocky Mountain Resorts Inc.\n\n- Group: Rocky Mountain Resorts Inc\n- SIC: 7011 (Hotels & Motels)\n- Location: Denver, CO\n- Employees: 95\n- Effective: 11/1/2026\n\nAttached: Census, Summary of Benefits, Prior Year Experience, and Application.\n\nThis is a rush — group is currently in market with multiple carriers.\n\nSarah Davis\nManaged Health Services`,
+    aiSummary: 'Rush quote request from MHS for Rocky Mountain Resorts, 95-employee hospitality group in Colorado. Multiple carriers in play. Four documents attached including census, SoB, experience data, and application.',
+    aiExtractedFields: [
+      { fieldName: 'Group Name', value: 'Rocky Mountain Resorts Inc', confidence: 0.96, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'TPA', value: 'Managed Health Services', confidence: 0.99, sourceLocation: 'Sender Signature', accepted: false },
+      { fieldName: 'Effective Date', value: '2026-11-01', confidence: 0.94, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'SIC Code', value: '7011', confidence: 0.90, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'State', value: 'CO', confidence: 0.88, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'Employee Count', value: '95', confidence: 0.93, sourceLocation: 'Email Body', accepted: false },
+      { fieldName: 'Rush', value: 'Yes', confidence: 0.92, sourceLocation: 'Subject + Body', accepted: false },
+    ],
+    documents: [
+      {
+        id: 'doc-e3-1', fileName: 'RockyMtn_Census_2026.xlsx', fileType: 'xlsx', fileSize: 156000,
+        uploadedAt: '2026-04-05T10:00:00Z', uploadSource: 'email', emailId: 'e3',
+        documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.93,
+        processingStatus: 'queued', pageCount: 2,
+      },
+      {
+        id: 'doc-e3-2', fileName: 'RockyMtn_Benefits_Summary.pdf', fileType: 'pdf', fileSize: 1100000,
+        uploadedAt: '2026-04-05T10:00:00Z', uploadSource: 'email', emailId: 'e3',
+        documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.91,
+        processingStatus: 'queued', pageCount: 10,
+      },
+      {
+        id: 'doc-e3-3', fileName: 'RockyMtn_Claims_Experience.pdf', fileType: 'pdf', fileSize: 2400000,
+        uploadedAt: '2026-04-05T10:00:00Z', uploadSource: 'email', emailId: 'e3',
+        documentType: 'experience', aiClassifiedType: 'experience', aiClassificationConfidence: 0.87,
+        processingStatus: 'queued', pageCount: 24,
+      },
+      {
+        id: 'doc-e3-4', fileName: 'RockyMtn_Application.pdf', fileType: 'pdf', fileSize: 320000,
+        uploadedAt: '2026-04-05T10:00:00Z', uploadSource: 'email', emailId: 'e3',
+        documentType: 'application', aiClassifiedType: 'application', aiClassificationConfidence: 0.89,
+        processingStatus: 'queued', pageCount: 4,
+      },
+    ],
+    threadId: 'thread-003',
+    threadCount: 1,
+  },
+  {
+    id: 'e4', fromAddress: 'tom@evergreentpa.com', fromName: 'Tom Wilson',
+    subject: 'FW: Census & SoB - Valley Tech Solutions',
+    receivedAt: '2026-04-05T10:45:00Z', processingStatus: 'pending',
+    attachmentCount: 5,
+    toAddress: 'quotes@tpac.com',
+    bodyPreview: `FYI — forwarding docs for Valley Tech Solutions. See below for details.\n\n---------- Forwarded message ----------\nFrom: HR Department <hr@valleytech.com>\n\nHi Tom,\n\nHere are the requested documents for our stop-loss renewal:\n- Updated census\n- Current SoB (2 plan types)\n- Large claimant report\n- Enrollment summary\n- Prior carrier ID cards\n\nLet me know if you need anything else.\n\nRegards,\nValley Tech HR`,
+    aiSummary: 'Forwarded renewal documents from Evergreen Health for Valley Tech Solutions. Five attachments including census, two-plan SoB, large claimant report, enrollment summary, and ID cards. TPA not yet detected from domain — likely Evergreen Health (EVE).',
+    aiExtractedFields: [
+      { fieldName: 'Group Name', value: 'Valley Tech Solutions', confidence: 0.91, sourceLocation: 'Subject + Body', accepted: false },
+      { fieldName: 'TPA', value: 'Evergreen Health', confidence: 0.82, sourceLocation: 'Sender Domain', accepted: false },
+      { fieldName: 'Quote Type', value: 'Renewal', confidence: 0.78, sourceLocation: 'Email Body', accepted: false },
+    ],
+    documents: [
+      {
+        id: 'doc-e4-1', fileName: 'ValleyTech_Census_Updated.xlsx', fileType: 'xlsx', fileSize: 178000,
+        uploadedAt: '2026-04-05T10:45:00Z', uploadSource: 'email', emailId: 'e4',
+        documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.94,
+        processingStatus: 'queued', pageCount: 2,
+      },
+      {
+        id: 'doc-e4-2', fileName: 'ValleyTech_SoB_PPO.pdf', fileType: 'pdf', fileSize: 920000,
+        uploadedAt: '2026-04-05T10:45:00Z', uploadSource: 'email', emailId: 'e4',
+        documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.90,
+        processingStatus: 'queued', pageCount: 9,
+      },
+      {
+        id: 'doc-e4-3', fileName: 'ValleyTech_SoB_HDHP.pdf', fileType: 'pdf', fileSize: 780000,
+        uploadedAt: '2026-04-05T10:45:00Z', uploadSource: 'email', emailId: 'e4',
+        documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.88,
+        processingStatus: 'queued', pageCount: 7,
+      },
+      {
+        id: 'doc-e4-4', fileName: 'ValleyTech_LargeClaimants.pdf', fileType: 'pdf', fileSize: 450000,
+        uploadedAt: '2026-04-05T10:45:00Z', uploadSource: 'email', emailId: 'e4',
+        documentType: 'experience', aiClassifiedType: 'experience', aiClassificationConfidence: 0.85,
+        processingStatus: 'queued', pageCount: 5,
+      },
+      {
+        id: 'doc-e4-5', fileName: 'ValleyTech_ID_Cards.pdf', fileType: 'pdf', fileSize: 2100000,
+        uploadedAt: '2026-04-05T10:45:00Z', uploadSource: 'email', emailId: 'e4',
+        documentType: 'id_cards', aiClassifiedType: 'id_cards', aiClassificationConfidence: 0.76,
+        processingStatus: 'queued', pageCount: 15,
+      },
+    ],
+    threadId: 'thread-004',
+    threadCount: 1,
+  },
+  {
+    id: 'e5', fromAddress: 'lisa@sbstpa.com', fromName: 'Lisa Chen',
+    subject: 'Re: Quote Request - Mountain View Medical Group',
+    receivedAt: '2026-04-05T11:30:00Z', processingStatus: 'processing',
+    tpaDetected: 'SBS', attachmentCount: 2,
+    toAddress: 'quotes@tpac.com',
+    bodyPreview: `Following up on our earlier request. Here are the updated documents for Mountain View Medical Group.\n\nUpdated census reflects recent terminations.\n\nLisa Chen\nStrategic Benefit Solutions`,
+    aiSummary: 'Follow-up from SBS with updated documents for Mountain View Medical Group. Updated census with recent termination changes. Part of ongoing thread.',
+    aiExtractedFields: [
+      { fieldName: 'Group Name', value: 'Mountain View Medical Group', confidence: 0.94, sourceLocation: 'Subject', accepted: false },
+      { fieldName: 'TPA', value: 'Strategic Benefit Solutions', confidence: 0.98, sourceLocation: 'Sender', accepted: false },
+    ],
+    documents: [
+      {
+        id: 'doc-e5-1', fileName: 'MtnView_Census_v2.xlsx', fileType: 'xlsx', fileSize: 134000,
+        uploadedAt: '2026-04-05T11:30:00Z', uploadSource: 'email', emailId: 'e5',
+        documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.96,
+        processingStatus: 'extracting', processingProgress: 62, pageCount: 2,
+      },
+      {
+        id: 'doc-e5-2', fileName: 'MtnView_Experience_Report.pdf', fileType: 'pdf', fileSize: 1800000,
+        uploadedAt: '2026-04-05T11:30:00Z', uploadSource: 'email', emailId: 'e5',
+        documentType: 'experience', aiClassifiedType: 'experience', aiClassificationConfidence: 0.84,
+        processingStatus: 'classifying', processingProgress: 30, pageCount: 18,
+      },
+    ],
+    threadId: 'thread-005',
+    threadCount: 3,
+  },
+  {
+    id: 'e6', fromAddress: 'noreply@marketingco.com', fromName: 'Marketing Updates',
+    subject: 'Your Weekly Newsletter',
+    receivedAt: '2026-04-05T07:00:00Z', processingStatus: 'skipped',
+    attachmentCount: 0,
+    toAddress: 'quotes@tpac.com',
+    bodyPreview: 'This email was automatically skipped — no RFP-related content detected.',
+    aiSummary: 'Marketing newsletter. No RFP content. Auto-skipped.',
+    documents: [],
+    threadId: 'thread-006',
+    threadCount: 1,
+  },
+];
+
+// Manually uploaded documents (not from email)
+export const MOCK_MANUAL_DOCUMENTS: IntakeDocument[] = [
+  {
+    id: 'doc-m1', fileName: 'Sunbelt_Retail_Census_2026.xlsx', fileType: 'xlsx', fileSize: 312000,
+    uploadedAt: '2026-04-04T14:20:00Z', uploadSource: 'manual', rfpId: 'rfp-005',
+    documentType: 'census', aiClassifiedType: 'census', aiClassificationConfidence: 0.96,
+    processingStatus: 'accepted', processingProgress: 100, pageCount: 4,
+    extractedFields: [
+      { fieldName: 'Total Rows', value: '95', confidence: 0.99, accepted: true },
+      { fieldName: 'Columns Found', value: 'Name, DOB, Gender, ZIP, Relationship, Plan', confidence: 0.94, accepted: true },
+      { fieldName: 'Plans Detected', value: 'PPO, HDHP', confidence: 0.89, accepted: true },
+    ],
+  },
+  {
+    id: 'doc-m2', fileName: 'Sunbelt_SoB_AllPlans.pdf', fileType: 'pdf', fileSize: 1450000,
+    uploadedAt: '2026-04-04T14:22:00Z', uploadSource: 'manual', rfpId: 'rfp-005',
+    documentType: 'sob', aiClassifiedType: 'sob', aiClassificationConfidence: 0.93,
+    processingStatus: 'review', processingProgress: 100, pageCount: 14,
+    extractedFields: [
+      { fieldName: 'Plan Count', value: '2', confidence: 0.91, accepted: false },
+      { fieldName: 'PPO Deductible', value: '$1,000/$2,000', confidence: 0.86, accepted: false },
+      { fieldName: 'HDHP Deductible', value: '$3,000/$6,000', confidence: 0.84, accepted: false },
+      { fieldName: 'Coinsurance', value: '80/20 PPO, 100% after ded HDHP', confidence: 0.78, accepted: false },
+    ],
+  },
+  {
+    id: 'doc-m3', fileName: 'NorthernLakes_Experience_2024.pdf', fileType: 'pdf', fileSize: 3200000,
+    uploadedAt: '2026-04-03T09:10:00Z', uploadSource: 'manual', rfpId: 'rfp-009',
+    documentType: 'experience', aiClassifiedType: 'experience', aiClassificationConfidence: 0.88,
+    processingStatus: 'accepted', processingProgress: 100, pageCount: 28,
+    extractedFields: [
+      { fieldName: 'Reporting Period', value: '01/2024 - 12/2024', confidence: 0.95, accepted: true },
+      { fieldName: 'Total Paid Claims', value: '$1,245,678', confidence: 0.91, accepted: true },
+      { fieldName: 'Large Claimants (>$50K)', value: '3', confidence: 0.88, accepted: true },
+      { fieldName: 'Largest Claim', value: '$287,450', confidence: 0.90, accepted: true },
+    ],
+  },
+  {
+    id: 'doc-m4', fileName: 'GenericDoc_Scan.pdf', fileType: 'pdf', fileSize: 780000,
+    uploadedAt: '2026-04-05T11:00:00Z', uploadSource: 'manual',
+    documentType: 'unknown', aiClassifiedType: 'unknown', aiClassificationConfidence: 0.42,
+    processingStatus: 'error', pageCount: 6,
+    errors: ['Unable to classify document type. Low confidence score (42%). Manual review required.', 'OCR quality below threshold on pages 3-5.'],
+  },
+  {
+    id: 'doc-m5', fileName: 'HeartlandSD_Application_Renewal.pdf', fileType: 'pdf', fileSize: 520000,
+    uploadedAt: '2026-04-02T16:30:00Z', uploadSource: 'manual', rfpId: 'rfp-006',
+    documentType: 'application', aiClassifiedType: 'application', aiClassificationConfidence: 0.91,
+    processingStatus: 'accepted', processingProgress: 100, pageCount: 6,
+    extractedFields: [
+      { fieldName: 'Group Name', value: 'Heartland School District #47', confidence: 0.97, accepted: true },
+      { fieldName: 'Effective Date', value: '07/01/2026', confidence: 0.94, accepted: true },
+      { fieldName: 'Contract Type', value: 'Specific + Aggregate', confidence: 0.89, accepted: true },
+      { fieldName: 'Requested Deductible', value: '$75,000', confidence: 0.86, accepted: true },
+    ],
+  },
 ];
 
 export const MOCK_POLICIES: Policy[] = [
