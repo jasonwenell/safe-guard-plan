@@ -359,19 +359,36 @@ export default function DocumentUpload() {
                         </div>
                         <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
                           {fields.map((f: any, i: number) => (
-                            <div key={f.id || i} className={`rounded px-2 py-1.5 text-xs ${f.accepted ? 'bg-success/5 border border-success/20' : 'bg-muted/50'}`}>
+                            <div
+                              key={f.id || i}
+                              className={`rounded px-2 py-1.5 text-xs transition-colors ${
+                                f.accepted
+                                  ? 'bg-success/5 border border-success/20'
+                                  : 'bg-amber-50 border border-amber-300 ring-1 ring-amber-200/60 shadow-sm'
+                              }`}
+                            >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
                                   {f.accepted ? (
                                     <CheckCircle2 className="w-3 h-3 text-success shrink-0" />
                                   ) : (
-                                    <div className="w-3 h-3 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                                    <span className="relative flex h-3 w-3 shrink-0">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                                      <Sparkles className="relative w-3 h-3 text-amber-600" />
+                                    </span>
                                   )}
-                                  <span className="text-muted-foreground">{f.field_name || f.fieldName}</span>
+                                  <span className={f.accepted ? 'text-muted-foreground' : 'text-amber-800 font-medium'}>
+                                    {f.field_name || f.fieldName}
+                                  </span>
+                                  {!f.accepted && (
+                                    <span className="text-[9px] font-semibold uppercase tracking-wider text-amber-600 bg-amber-100 rounded px-1 py-0.5 leading-none">
+                                      Review
+                                    </span>
+                                  )}
                                 </div>
                                 <ConfidenceBar confidence={f.confidence} />
                               </div>
-                              <p className="font-medium text-foreground mt-0.5 ml-5">{f.value}</p>
+                              <p className={`font-medium mt-0.5 ml-5 ${f.accepted ? 'text-foreground' : 'text-amber-900'}`}>{f.value}</p>
                             </div>
                           ))}
                         </div>
