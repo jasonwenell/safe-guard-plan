@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
   { label: 'RFP Quote Log', icon: FileText, path: '/rfps' },
+  { label: 'AI Underwriting', icon: Zap, path: '/underwriting', badge: '5' },
   { label: 'Email Intake', icon: Mail, path: '/email-intake', badge: '4' },
   { label: 'Census', icon: Users, path: '/census' },
   { label: 'Plan Design', icon: Layers, path: '/plan-design' },
