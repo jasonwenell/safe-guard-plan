@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Plus, Filter, Download } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function RFPQuoteLog() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const navigate = useNavigate();
 
   const filtered = MOCK_RFPS.filter(rfp => {
     const matchesSearch = search === '' || 
@@ -109,6 +110,7 @@ export default function RFPQuoteLog() {
                 {filtered.map((rfp) => (
                   <tr
                     key={rfp.id}
+                    onClick={() => navigate(`/rfps/${rfp.id}`)}
                     className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-[3px] border-l-destructive' : ''}`}
                   >
                     <td className="py-2.5 px-3 font-mono text-xs font-medium">{rfp.caseNumber}</td>
