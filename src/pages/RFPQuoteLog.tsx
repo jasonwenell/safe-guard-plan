@@ -117,6 +117,13 @@ export default function RFPQuoteLog() {
                     className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-[3px] border-l-destructive' : ''}`}
                   >
                     <td className="py-2.5 px-3 font-mono text-xs font-medium">{rfp.caseNumber}</td>
+                    <td className="py-2.5 px-3 text-center">
+                      {MOCK_QUOTABILITY_SCORES[rfp.id] ? (
+                        <QuotabilityBadge score={MOCK_QUOTABILITY_SCORES[rfp.id].overallScore} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="py-2.5 px-3"><StatusBadge status={rfp.status} /></td>
                     <td className="py-2.5 px-3"><TypeBadge type={rfp.type} /></td>
                     <td className="py-2.5 px-3">
