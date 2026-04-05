@@ -8,11 +8,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Save, Upload, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Upload, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MOCK_RFPS, MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { STATUS_LABELS } from '@/types/sleq';
+
+// AI-highlighted input wrapper
+const aiHighlight = "ring-2 ring-amber-300 border-amber-400 bg-amber-50/60";
+const aiAccepted = "ring-1 ring-green-300 border-green-300 bg-green-50/40";
+
+function AiFieldLabel({ label, required, aiPopulated, accepted }: { label: string; required?: boolean; aiPopulated?: boolean; accepted?: boolean }) {
+  return (
+    <Label className="text-xs flex items-center gap-1.5">
+      {label}{required && ' *'}
+      {aiPopulated && !accepted && (
+        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded px-1 py-0.5">
+          <Sparkles className="w-3 h-3" /> AI
+        </span>
+      )}
+      {aiPopulated && accepted && (
+        <CheckCircle2 className="w-3 h-3 text-green-600" />
+      )}
+    </Label>
+  );
+}
 
 export default function RFPDetail() {
   const { id } = useParams<{ id: string }>();
