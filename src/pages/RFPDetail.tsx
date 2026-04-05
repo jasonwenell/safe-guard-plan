@@ -40,6 +40,22 @@ export default function RFPDetail() {
   const isNew = !rfp;
 
   const [isRush, setIsRush] = useState(rfp?.isRush ?? false);
+  const [acceptedFields, setAcceptedFields] = useState<Set<string>>(new Set());
+  const hasAi = !isNew; // existing RFPs have AI-populated fields
+
+  const toggleAccept = (field: string) => {
+    setAcceptedFields(prev => {
+      const next = new Set(prev);
+      if (next.has(field)) next.delete(field); else next.add(field);
+      return next;
+    });
+  };
+
+  const acceptAll = () => {
+    setAcceptedFields(new Set(['groupName','sicCode','sicDescription','state','employees','tpa','producer','carrier','contact','effectiveDate','receivedDate','type','rush']));
+  };
+
+  const aiClass = (field: string) => acceptedFields.has(field) ? aiAccepted : (hasAi ? aiHighlight : '');
 
   return (
     <div className="p-6 space-y-6 max-w-[1200px]">
