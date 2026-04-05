@@ -197,9 +197,9 @@ export default function RFPDetail() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Effective Date *</Label>
-                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} />
+              <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('effectiveDate')}>
+                <AiFieldLabel label="Effective Date" required aiPopulated={hasAi && !!rfp?.effectiveDate} accepted={acceptedFields.has('effectiveDate')} />
+                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} className={aiClass('effectiveDate')} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Received Date</Label>
@@ -218,10 +218,10 @@ export default function RFPDetail() {
             </div>
             <Separator />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Type *</Label>
+              <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('type')}>
+                <AiFieldLabel label="Type" required aiPopulated={hasAi && !!rfp?.type} accepted={acceptedFields.has('type')} />
                 <Select defaultValue={rfp?.type ?? 'NEW'}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className={aiClass('type')}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="NEW">New Business</SelectItem>
                     <SelectItem value="RENEWAL">Renewal</SelectItem>
