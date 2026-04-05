@@ -150,10 +150,10 @@ export default function RFPDetail() {
             <CardTitle className="text-sm font-semibold">TPA / Producer / Carrier</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs">TPA *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('tpa')}>
+              <AiFieldLabel label="TPA" required aiPopulated={hasAi && !!rfp?.tpaId} accepted={acceptedFields.has('tpa')} />
               <Select defaultValue={rfp?.tpaId ?? undefined}>
-                <SelectTrigger><SelectValue placeholder="Type to search TPA..." /></SelectTrigger>
+                <SelectTrigger className={aiClass('tpa')}><SelectValue placeholder="Type to search TPA..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_TPAS.filter(t => t.isActive).map(t => (
                     <SelectItem key={t.id} value={t.id}>{t.code} — {t.name}</SelectItem>
@@ -161,10 +161,10 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Producer *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('producer')}>
+              <AiFieldLabel label="Producer" required aiPopulated={hasAi && !!rfp?.producerId} accepted={acceptedFields.has('producer')} />
               <Select defaultValue={rfp?.producerId ?? undefined}>
-                <SelectTrigger><SelectValue placeholder="Type to search Producer..." /></SelectTrigger>
+                <SelectTrigger className={aiClass('producer')}><SelectValue placeholder="Type to search Producer..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_PRODUCERS.filter(p => p.isActive).map(p => (
                     <SelectItem key={p.id} value={p.id}>{p.code} — {p.name}</SelectItem>
@@ -172,10 +172,10 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Carrier *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('carrier')}>
+              <AiFieldLabel label="Carrier" required aiPopulated={hasAi && !!rfp?.carrierId} accepted={acceptedFields.has('carrier')} />
               <Select defaultValue={rfp?.carrierId ?? 'c1'}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className={aiClass('carrier')}><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {MOCK_CARRIERS.map(c => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -183,9 +183,9 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Contact</Label>
-              <Input defaultValue={rfp?.producerName ?? ''} placeholder="Contact name" />
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('contact')}>
+              <AiFieldLabel label="Contact" aiPopulated={hasAi && !!rfp?.producerName} accepted={acceptedFields.has('contact')} />
+              <Input defaultValue={rfp?.producerName ?? ''} placeholder="Contact name" className={aiClass('contact')} />
             </div>
           </CardContent>
         </Card>
