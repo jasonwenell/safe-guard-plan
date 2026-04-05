@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { MOCK_RFPS } from '@/data/mockData';
+import { MOCK_QUOTABILITY_SCORES } from '@/data/underwritingMockData';
 import { RFP, RFPStatus, STATUS_LABELS } from '@/types/sleq';
 import { StatusBadge, RushBadge, DuplicateBadge, AIBadge, TypeBadge, CensusStatusPill, SetupStatusPill } from '@/components/shared/StatusBadges';
+import { QuotabilityBadge } from '@/components/underwriting/QuotabilityScore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -91,6 +93,7 @@ export default function RFPQuoteLog() {
               <thead>
                 <tr className="border-b bg-muted/50">
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground w-[70px]">Case #</th>
+                  <th className="text-center py-2.5 px-3 text-xs font-medium text-muted-foreground w-[50px]" title="AI Quotability Score">QS</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground">Status</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground w-[60px]">Type</th>
                   <th className="text-left py-2.5 px-3 text-xs font-medium text-muted-foreground">Group Name</th>
@@ -114,6 +117,13 @@ export default function RFPQuoteLog() {
                     className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-[3px] border-l-destructive' : ''}`}
                   >
                     <td className="py-2.5 px-3 font-mono text-xs font-medium">{rfp.caseNumber}</td>
+                    <td className="py-2.5 px-3 text-center">
+                      {MOCK_QUOTABILITY_SCORES[rfp.id] ? (
+                        <QuotabilityBadge score={MOCK_QUOTABILITY_SCORES[rfp.id].overallScore} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="py-2.5 px-3"><StatusBadge status={rfp.status} /></td>
                     <td className="py-2.5 px-3"><TypeBadge type={rfp.type} /></td>
                     <td className="py-2.5 px-3">

@@ -13,6 +13,7 @@ import DocumentUpload from "./pages/DocumentUpload";
 import CensusProcessing from "./pages/CensusProcessing";
 import PlanDesign from "./pages/PlanDesign";
 import RatingEngine from "./pages/RatingEngine";
+import AIUnderwriting from "./pages/AIUnderwriting";
 import Proposals from "./pages/Proposals";
 import PolicyAdmin from "./pages/PolicyAdmin";
 import Renewals from "./pages/Renewals";
@@ -39,6 +40,8 @@ const App = () => (
             <Route path="/documents" element={<DocumentUpload />} />
             <Route path="/census" element={<CensusProcessing />} />
             <Route path="/plan-design" element={<PlanDesign />} />
+            <Route path="/underwriting" element={<AIUnderwriting />} />
+            <Route path="/underwriting/:rfpId" element={<AIUnderwriting />} />
             <Route path="/rating" element={<RatingEngine />} />
             <Route path="/proposals" element={<Proposals />} />
             <Route path="/policies" element={<PolicyAdmin />} />
