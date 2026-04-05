@@ -108,9 +108,9 @@ export default function RFPDetail() {
             <CardTitle className="text-sm font-semibold">Group Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Group Name *</Label>
-              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" />
+            <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('groupName')} className-cursor={hasAi ? 'cursor-pointer' : ''}>
+              <AiFieldLabel label="Group Name" required aiPopulated={hasAi && !!rfp?.groupName} accepted={acceptedFields.has('groupName')} />
+              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" className={aiClass('groupName')} />
               <p className="text-[10px] text-muted-foreground">No # or / characters. Typing triggers duplicate/renewal detection.</p>
             </div>
             <div className="space-y-1.5">
@@ -118,13 +118,13 @@ export default function RFPDetail() {
               <Input placeholder="Doing Business As (optional)" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs">SIC Code *</Label>
-                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('sicCode')}>
+                <AiFieldLabel label="SIC Code" required aiPopulated={hasAi && !!rfp?.sicCode} accepted={acceptedFields.has('sicCode')} />
+                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" className={aiClass('sicCode')} />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">SIC Description</Label>
-                <Input readOnly defaultValue={rfp?.sicDescription ?? ''} placeholder="Auto-populated" className="bg-muted/50" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('sicDescription')}>
+                <AiFieldLabel label="SIC Description" aiPopulated={hasAi && !!rfp?.sicDescription} accepted={acceptedFields.has('sicDescription')} />
+                <Input readOnly defaultValue={rfp?.sicDescription ?? ''} placeholder="Auto-populated" className={`bg-muted/50 ${aiClass('sicDescription')}`} />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -132,13 +132,13 @@ export default function RFPDetail() {
                 <Label className="text-xs">Situs ZIP *</Label>
                 <Input defaultValue={''} placeholder="55401" />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">State</Label>
-                <Input readOnly defaultValue={rfp?.state ?? ''} placeholder="Auto" className="bg-muted/50" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('state')}>
+                <AiFieldLabel label="State" aiPopulated={hasAi && !!rfp?.state} accepted={acceptedFields.has('state')} />
+                <Input readOnly defaultValue={rfp?.state ?? ''} placeholder="Auto" className={`bg-muted/50 ${aiClass('state')}`} />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Employees</Label>
-                <Input type="number" defaultValue={rfp?.employeeCount ?? ''} placeholder="0" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('employees')}>
+                <AiFieldLabel label="Employees" aiPopulated={hasAi && !!rfp?.employeeCount} accepted={acceptedFields.has('employees')} />
+                <Input type="number" defaultValue={rfp?.employeeCount ?? ''} placeholder="0" className={aiClass('employees')} />
               </div>
             </div>
           </CardContent>
