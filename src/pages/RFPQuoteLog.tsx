@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { MOCK_RFPS } from '@/data/mockData';
+import { MOCK_QUOTABILITY_SCORES } from '@/data/underwritingMockData';
 import { RFP, RFPStatus, STATUS_LABELS } from '@/types/sleq';
 import { StatusBadge, RushBadge, DuplicateBadge, AIBadge, TypeBadge, CensusStatusPill, SetupStatusPill } from '@/components/shared/StatusBadges';
+import { QuotabilityBadge } from '@/components/underwriting/QuotabilityScore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
