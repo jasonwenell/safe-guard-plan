@@ -5,18 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FileText, Clock, Zap, ClipboardList, Calculator, TrendingUp, Trophy, Timer
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const stats = MOCK_DASHBOARD_STATS;
 
 const statCards = [
-  { label: 'Active RFPs', value: stats.totalActiveRFPs, icon: FileText, color: 'text-primary' },
-  { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning' },
-  { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive' },
-  { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info' },
-  { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary' },
-  { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted' },
-  { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success' },
-  { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground' },
+  { label: 'Active RFPs', value: stats.totalActiveRFPs, icon: FileText, color: 'text-primary', path: '/rfps' },
+  { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning', path: '/rfps' },
+  { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive', path: '/rfps' },
+  { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info', path: '/rfps' },
+  { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rating' },
+  { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted', path: '/proposals' },
+  { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success', path: '/policies' },
+  { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground', path: '/analytics' },
 ];
 
 const recentRFPs = MOCK_RFPS.slice(0, 6);
@@ -31,6 +32,8 @@ const statusDistribution = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   return (
     <div className="p-6 space-y-6 max-w-[1600px]">
       {/* Header */}
@@ -42,7 +45,11 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((s) => (
-          <Card key={s.label} className="border shadow-sm">
+          <Card
+            key={s.label}
+            className="border shadow-sm cursor-pointer hover:shadow-md hover:border-primary/30 transition-all"
+            onClick={() => navigate(s.path)}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <s.icon className={`w-5 h-5 ${s.color}`} />
@@ -95,7 +102,11 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {recentRFPs.map((rfp) => (
-                    <tr key={rfp.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={rfp.id}
+                      className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/rfps/${rfp.id}`)}
+                    >
                       <td className="py-2.5 px-4 font-mono text-xs">{rfp.caseNumber}</td>
                       <td className="py-2.5 px-4">
                         <div className="flex items-center gap-2">
@@ -141,7 +152,7 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {MOCK_RFPS.filter(r => !r.setupComplete && r.status !== RFPStatus.DECLINED && r.status !== RFPStatus.WON).slice(0, 5).map((rfp) => (
-                  <tr key={rfp.id} className={`border-b last:border-0 hover:bg-muted/30 transition-colors ${rfp.isRush ? 'border-l-2 border-l-destructive' : ''}`}>
+                  <tr key={rfp.id} className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-2 border-l-destructive' : ''}`} onClick={() => navigate(`/rfps/${rfp.id}`)}>
                     <td className="py-2.5 px-4 font-mono text-xs">{rfp.caseNumber}</td>
                     <td className="py-2.5 px-4 font-medium text-foreground">{rfp.groupName}</td>
                     <td className="py-2.5 px-4 text-muted-foreground">{rfp.tpaCode}</td>
