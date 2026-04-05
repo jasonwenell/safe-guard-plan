@@ -108,7 +108,7 @@ export default function RFPDetail() {
             <CardTitle className="text-sm font-semibold">Group Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('groupName')} className-cursor={hasAi ? 'cursor-pointer' : ''}>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('groupName')}>
               <AiFieldLabel label="Group Name" required aiPopulated={hasAi && !!rfp?.groupName} accepted={acceptedFields.has('groupName')} />
               <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" className={aiClass('groupName')} />
               <p className="text-[10px] text-muted-foreground">No # or / characters. Typing triggers duplicate/renewal detection.</p>
