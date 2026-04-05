@@ -10,14 +10,14 @@ import { useNavigate } from 'react-router-dom';
 const stats = MOCK_DASHBOARD_STATS;
 
 const statCards = [
-  { label: 'Active RFPs', value: stats.totalActiveRFPs, icon: FileText, color: 'text-primary' },
-  { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning' },
-  { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive' },
-  { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info' },
-  { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary' },
-  { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted' },
-  { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success' },
-  { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground' },
+  { label: 'Active RFPs', value: stats.totalActiveRFPs, icon: FileText, color: 'text-primary', path: '/rfps' },
+  { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning', path: '/rfps' },
+  { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive', path: '/rfps' },
+  { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info', path: '/rfps' },
+  { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rating' },
+  { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted', path: '/proposals' },
+  { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success', path: '/policies' },
+  { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground', path: '/analytics' },
 ];
 
 const recentRFPs = MOCK_RFPS.slice(0, 6);
