@@ -8,11 +8,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Save, Upload, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Upload, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MOCK_RFPS, MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { STATUS_LABELS } from '@/types/sleq';
+
+// AI-highlighted input wrapper
+const aiHighlight = "ring-2 ring-amber-300 border-amber-400 bg-amber-50/60";
+const aiAccepted = "ring-1 ring-green-300 border-green-300 bg-green-50/40";
+
+function AiFieldLabel({ label, required, aiPopulated, accepted }: { label: string; required?: boolean; aiPopulated?: boolean; accepted?: boolean }) {
+  return (
+    <Label className="text-xs flex items-center gap-1.5">
+      {label}{required && ' *'}
+      {aiPopulated && !accepted && (
+        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded px-1 py-0.5">
+          <Sparkles className="w-3 h-3" /> AI
+        </span>
+      )}
+      {aiPopulated && accepted && (
+        <CheckCircle2 className="w-3 h-3 text-green-600" />
+      )}
+    </Label>
+  );
+}
 
 export default function RFPDetail() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +40,22 @@ export default function RFPDetail() {
   const isNew = !rfp;
 
   const [isRush, setIsRush] = useState(rfp?.isRush ?? false);
+  const [acceptedFields, setAcceptedFields] = useState<Set<string>>(new Set());
+  const hasAi = !isNew; // existing RFPs have AI-populated fields
+
+  const toggleAccept = (field: string) => {
+    setAcceptedFields(prev => {
+      const next = new Set(prev);
+      if (next.has(field)) next.delete(field); else next.add(field);
+      return next;
+    });
+  };
+
+  const acceptAll = () => {
+    setAcceptedFields(new Set(['groupName','sicCode','sicDescription','state','employees','tpa','producer','carrier','contact','effectiveDate','receivedDate','type','rush']));
+  };
+
+  const aiClass = (field: string) => acceptedFields.has(field) ? aiAccepted : (hasAi ? aiHighlight : '');
 
   return (
     <div className="p-6 space-y-6 max-w-[1200px]">
@@ -62,7 +98,7 @@ export default function RFPDetail() {
               : `AI auto-populated fields from intake. Review highlighted values below.`}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100">Accept All</Button>
+        <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100" onClick={acceptAll}>Accept All</Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -72,9 +108,9 @@ export default function RFPDetail() {
             <CardTitle className="text-sm font-semibold">Group Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Group Name *</Label>
-              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" />
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('groupName')}>
+              <AiFieldLabel label="Group Name" required aiPopulated={hasAi && !!rfp?.groupName} accepted={acceptedFields.has('groupName')} />
+              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name (fuzzy search active)" className={aiClass('groupName')} />
               <p className="text-[10px] text-muted-foreground">No # or / characters. Typing triggers duplicate/renewal detection.</p>
             </div>
             <div className="space-y-1.5">
@@ -82,13 +118,13 @@ export default function RFPDetail() {
               <Input placeholder="Doing Business As (optional)" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs">SIC Code *</Label>
-                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('sicCode')}>
+                <AiFieldLabel label="SIC Code" required aiPopulated={hasAi && !!rfp?.sicCode} accepted={acceptedFields.has('sicCode')} />
+                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" className={aiClass('sicCode')} />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">SIC Description</Label>
-                <Input readOnly defaultValue={rfp?.sicDescription ?? ''} placeholder="Auto-populated" className="bg-muted/50" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('sicDescription')}>
+                <AiFieldLabel label="SIC Description" aiPopulated={hasAi && !!rfp?.sicDescription} accepted={acceptedFields.has('sicDescription')} />
+                <Input readOnly defaultValue={rfp?.sicDescription ?? ''} placeholder="Auto-populated" className={`bg-muted/50 ${aiClass('sicDescription')}`} />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -96,13 +132,13 @@ export default function RFPDetail() {
                 <Label className="text-xs">Situs ZIP *</Label>
                 <Input defaultValue={''} placeholder="55401" />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">State</Label>
-                <Input readOnly defaultValue={rfp?.state ?? ''} placeholder="Auto" className="bg-muted/50" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('state')}>
+                <AiFieldLabel label="State" aiPopulated={hasAi && !!rfp?.state} accepted={acceptedFields.has('state')} />
+                <Input readOnly defaultValue={rfp?.state ?? ''} placeholder="Auto" className={`bg-muted/50 ${aiClass('state')}`} />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Employees</Label>
-                <Input type="number" defaultValue={rfp?.employeeCount ?? ''} placeholder="0" />
+              <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('employees')}>
+                <AiFieldLabel label="Employees" aiPopulated={hasAi && !!rfp?.employeeCount} accepted={acceptedFields.has('employees')} />
+                <Input type="number" defaultValue={rfp?.employeeCount ?? ''} placeholder="0" className={aiClass('employees')} />
               </div>
             </div>
           </CardContent>
@@ -114,10 +150,10 @@ export default function RFPDetail() {
             <CardTitle className="text-sm font-semibold">TPA / Producer / Carrier</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs">TPA *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('tpa')}>
+              <AiFieldLabel label="TPA" required aiPopulated={hasAi && !!rfp?.tpaId} accepted={acceptedFields.has('tpa')} />
               <Select defaultValue={rfp?.tpaId ?? undefined}>
-                <SelectTrigger><SelectValue placeholder="Type to search TPA..." /></SelectTrigger>
+                <SelectTrigger className={aiClass('tpa')}><SelectValue placeholder="Type to search TPA..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_TPAS.filter(t => t.isActive).map(t => (
                     <SelectItem key={t.id} value={t.id}>{t.code} — {t.name}</SelectItem>
@@ -125,10 +161,10 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Producer *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('producer')}>
+              <AiFieldLabel label="Producer" required aiPopulated={hasAi && !!rfp?.producerId} accepted={acceptedFields.has('producer')} />
               <Select defaultValue={rfp?.producerId ?? undefined}>
-                <SelectTrigger><SelectValue placeholder="Type to search Producer..." /></SelectTrigger>
+                <SelectTrigger className={aiClass('producer')}><SelectValue placeholder="Type to search Producer..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_PRODUCERS.filter(p => p.isActive).map(p => (
                     <SelectItem key={p.id} value={p.id}>{p.code} — {p.name}</SelectItem>
@@ -136,10 +172,10 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Carrier *</Label>
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('carrier')}>
+              <AiFieldLabel label="Carrier" required aiPopulated={hasAi && !!rfp?.carrierId} accepted={acceptedFields.has('carrier')} />
               <Select defaultValue={rfp?.carrierId ?? 'c1'}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className={aiClass('carrier')}><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {MOCK_CARRIERS.map(c => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -147,9 +183,9 @@ export default function RFPDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Contact</Label>
-              <Input defaultValue={rfp?.producerName ?? ''} placeholder="Contact name" />
+            <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('contact')}>
+              <AiFieldLabel label="Contact" aiPopulated={hasAi && !!rfp?.producerName} accepted={acceptedFields.has('contact')} />
+              <Input defaultValue={rfp?.producerName ?? ''} placeholder="Contact name" className={aiClass('contact')} />
             </div>
           </CardContent>
         </Card>
@@ -161,9 +197,9 @@ export default function RFPDetail() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Effective Date *</Label>
-                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} />
+              <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('effectiveDate')}>
+                <AiFieldLabel label="Effective Date" required aiPopulated={hasAi && !!rfp?.effectiveDate} accepted={acceptedFields.has('effectiveDate')} />
+                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} className={aiClass('effectiveDate')} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Received Date</Label>
@@ -182,10 +218,10 @@ export default function RFPDetail() {
             </div>
             <Separator />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Type *</Label>
+              <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('type')}>
+                <AiFieldLabel label="Type" required aiPopulated={hasAi && !!rfp?.type} accepted={acceptedFields.has('type')} />
                 <Select defaultValue={rfp?.type ?? 'NEW'}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className={aiClass('type')}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="NEW">New Business</SelectItem>
                     <SelectItem value="RENEWAL">Renewal</SelectItem>
