@@ -1,9 +1,11 @@
 import { MOCK_EMAILS } from '@/data/mockData';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, RefreshCw, Mail, Paperclip, Check, X, Loader2, SkipForward, Eye } from 'lucide-react';
+import { Search, RefreshCw, Mail, Paperclip, Check, X, Loader2, SkipForward, Eye, Upload } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const statusConfig = {
   pending: { label: 'Pending', color: 'bg-warning/15 text-warning border border-warning/30', icon: Mail },
@@ -15,6 +17,7 @@ const statusConfig = {
 
 export default function EmailIntake() {
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
   const filtered = MOCK_EMAILS.filter(e =>
     search === '' ||
@@ -26,13 +29,32 @@ export default function EmailIntake() {
     <div className="p-6 space-y-4 max-w-[1600px]">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Email Intake</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">AI-powered inbox monitoring — quotes@tpac.com</p>
+          <h1 className="text-2xl font-bold text-foreground">AI Intake</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">AI-powered inbox monitoring & document processing</p>
         </div>
-        <Button variant="outline" className="gap-2">
-          <RefreshCw className="w-4 h-4" /> Refresh Inbox
-        </Button>
+        <div className="flex gap-2">
+          <Link to="/documents">
+            <Button variant="outline" className="gap-2">
+              <Upload className="w-4 h-4" /> Upload Documents
+            </Button>
+          </Link>
+          <Button variant="outline" className="gap-2">
+            <RefreshCw className="w-4 h-4" /> Refresh Inbox
+          </Button>
+        </div>
       </div>
+
+      {/* Tabs */}
+      <Tabs defaultValue="emails" className="w-full">
+        <TabsList>
+          <TabsTrigger value="emails" className="gap-1.5">
+            <Mail className="w-3.5 h-3.5" /> Email Inbox ({MOCK_EMAILS.length})
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="gap-1.5" onClick={() => navigate('/documents')}>
+            <Upload className="w-3.5 h-3.5" /> Documents
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <Card className="border shadow-sm">
         <CardContent className="p-3">
@@ -63,7 +85,11 @@ export default function EmailIntake() {
                 const sc = statusConfig[email.processingStatus];
                 const Icon = sc.icon;
                 return (
-                  <tr key={email.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <tr
+                    key={email.id}
+                    onClick={() => navigate(`/email-intake/${email.id}`)}
+                    className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                  >
                     <td className="py-2.5 px-4">
                       <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${sc.color}`}>
                         <Icon className={`w-3 h-3 ${email.processingStatus === 'processing' ? 'animate-spin' : ''}`} />
@@ -87,13 +113,13 @@ export default function EmailIntake() {
                     <td className="py-2.5 px-4 text-xs text-foreground truncate max-w-[180px]">{email.groupDetected || '—'}</td>
                     <td className="py-2.5 px-4 text-center text-xs text-muted-foreground">{email.attachmentCount || '—'}</td>
                     <td className="py-2.5 px-4 text-xs text-muted-foreground">{new Date(email.receivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-                    <td className="py-2.5 px-4 text-right">
+                    <td className="py-2.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-1 justify-end">
                         {email.processingStatus === 'completed' && !email.rfpId && (
                           <Button size="sm" variant="default" className="h-7 text-xs">Create RFP</Button>
                         )}
                         {email.processingStatus === 'completed' && email.rfpId && (
-                          <Button size="sm" variant="outline" className="h-7 text-xs gap-1"><Eye className="w-3 h-3" /> View RFP</Button>
+                          <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => navigate(`/rfps/${email.rfpId}`)}><Eye className="w-3 h-3" /> View RFP</Button>
                         )}
                         {email.processingStatus === 'pending' && (
                           <Button size="sm" variant="outline" className="h-7 text-xs">Process</Button>

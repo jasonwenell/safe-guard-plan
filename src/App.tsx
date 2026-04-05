@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import RFPQuoteLog from "./pages/RFPQuoteLog";
 import RFPDetail from "./pages/RFPDetail";
 import EmailIntake from "./pages/EmailIntake";
+import EmailDetail from "./pages/EmailDetail";
+import DocumentUpload from "./pages/DocumentUpload";
 import CensusProcessing from "./pages/CensusProcessing";
 import PlanDesign from "./pages/PlanDesign";
 import RatingEngine from "./pages/RatingEngine";
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/rfps/new" element={<RFPDetail />} />
             <Route path="/rfps/:id" element={<RFPDetail />} />
             <Route path="/email-intake" element={<EmailIntake />} />
+            <Route path="/email-intake/:id" element={<EmailDetail />} />
+            <Route path="/documents" element={<DocumentUpload />} />
             <Route path="/census" element={<CensusProcessing />} />
             <Route path="/plan-design" element={<PlanDesign />} />
             <Route path="/rating" element={<RatingEngine />} />
