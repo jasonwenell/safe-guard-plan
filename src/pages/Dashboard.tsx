@@ -32,6 +32,8 @@ const statusDistribution = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   return (
     <div className="p-6 space-y-6 max-w-[1600px]">
       {/* Header */}
@@ -43,7 +45,11 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((s) => (
-          <Card key={s.label} className="border shadow-sm">
+          <Card
+            key={s.label}
+            className="border shadow-sm cursor-pointer hover:shadow-md hover:border-primary/30 transition-all"
+            onClick={() => navigate(s.path)}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <s.icon className={`w-5 h-5 ${s.color}`} />
