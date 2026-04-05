@@ -94,11 +94,11 @@ export default function RFPDetail() {
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Situs ZIP *</Label>
-                <Input defaultValue={rfp?.situsZip ?? ''} placeholder="55401" />
+                <Input defaultValue={''} placeholder="55401" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">State</Label>
-                <Input readOnly defaultValue={rfp?.situsState ?? ''} placeholder="Auto" className="bg-muted/50" />
+                <Input readOnly defaultValue={rfp?.state ?? ''} placeholder="Auto" className="bg-muted/50" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Employees</Label>
