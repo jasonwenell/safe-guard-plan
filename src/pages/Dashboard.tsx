@@ -152,7 +152,7 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {MOCK_RFPS.filter(r => !r.setupComplete && r.status !== RFPStatus.DECLINED && r.status !== RFPStatus.WON).slice(0, 5).map((rfp) => (
-                  <tr key={rfp.id} className={`border-b last:border-0 hover:bg-muted/30 transition-colors ${rfp.isRush ? 'border-l-2 border-l-destructive' : ''}`}>
+                  <tr key={rfp.id} className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-2 border-l-destructive' : ''}`} onClick={() => navigate(`/rfps/${rfp.id}`)}>
                     <td className="py-2.5 px-4 font-mono text-xs">{rfp.caseNumber}</td>
                     <td className="py-2.5 px-4 font-medium text-foreground">{rfp.groupName}</td>
                     <td className="py-2.5 px-4 text-muted-foreground">{rfp.tpaCode}</td>
