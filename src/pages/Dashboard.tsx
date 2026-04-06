@@ -225,13 +225,13 @@ function AssociateDashboard() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Associate Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Heidi — here's your setup queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Heidi — here's your setup queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/census')}>
           <CardContent className="p-4">
             <Users className="w-5 h-5 text-teal-600 mb-1" />
