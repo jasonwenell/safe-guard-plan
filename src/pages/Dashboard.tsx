@@ -166,13 +166,13 @@ function AssistantDashboard() {
   const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Assistant Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Traci — here's your intake queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Traci — here's your intake queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/email-intake')}>
           <CardContent className="p-4">
             <Mail className="w-5 h-5 text-info mb-1" />
