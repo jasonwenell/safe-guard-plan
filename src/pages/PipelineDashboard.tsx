@@ -12,6 +12,7 @@ import { usePersona } from '@/contexts/PersonaContext';
 
 export default function PipelineDashboard() {
   const navigate = useNavigate();
+  const { role } = usePersona();
   const stats = MOCK_PIPELINE_STATS;
   const aiImpact = MOCK_AI_IMPACT;
 
