@@ -68,7 +68,7 @@ export default function PipelineDashboard() {
           </div>
 
           {/* Weekly Stats + Health */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <Card>
               <CardContent className="p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">This Week</p>
