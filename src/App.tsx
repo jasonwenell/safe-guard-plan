@@ -19,6 +19,8 @@ import PolicyAdmin from "./pages/PolicyAdmin";
 import Renewals from "./pages/Renewals";
 import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
+import PipelineDashboard from "./pages/PipelineDashboard";
+import WorkflowDetail from "./pages/WorkflowDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
