@@ -1,4 +1,4 @@
-import { RFP, RFPStatus, CensusReadyStatus, SetupTaskStatus, EmailInbox, Policy, DashboardStats, Carrier, TPA, Producer, CensusMember, Scenario, IntakeDocument, EmailDetail, ExtractedField } from '@/types/sleq';
+import { RFP, RFPStatus, CensusReadyStatus, SetupTaskStatus, EmailInbox, Policy, DashboardStats, Carrier, TPA, Producer, CensusMember, Scenario, IntakeDocument, EmailDetail, ExtractedField, ClaimsExperienceMonth, LargeClaimant, PriorYearSummary, CaseCommunication, QuoteOutcome, BindingRecord } from '@/types/sleq';
 
 export const MOCK_CARRIERS: Carrier[] = [
   { id: 'c1', code: 'PANAM', name: 'Pan American', isActive: true, quotableStates: ['AL','AZ','AR','CO','FL','GA','IL','IN','IA','KS','KY','LA','MI','MN','MS','MO','NE','NC','OH','OK','OR','PA','SC','TN','TX','UT','VA','WI'] },
