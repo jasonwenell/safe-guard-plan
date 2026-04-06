@@ -1,15 +1,43 @@
 import { cn } from '@/lib/utils';
 import { WorkflowInstance, StepStatus, WorkflowPhase, WORKFLOW_STEP_DEFS, PHASE_COLORS, PHASE_LABELS } from '@/types/workflow';
-import { Sparkles, AlertTriangle, Check, Clock, User, ChevronDown, ChevronRight, ArrowRight } from 'lucide-react';
+import { Sparkles, AlertTriangle, Check, Clock, User, ChevronDown, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ExpandedTrackerProps {
   workflow: WorkflowInstance;
 }
 
+// Map each step to a destination route and action label
+function getStepAction(stepId: string, rfpId: string): { route: string; label: string } | null {
+  const map: Record<string, { route: string; label: string }> = {
+    STEP_01: { route: `/rfps/${rfpId}`, label: 'Open RFP Detail' },
+    STEP_02: { route: '/documents', label: 'Upload Documents' },
+    STEP_03: { route: `/rfps/${rfpId}`, label: 'Review Validation' },
+    STEP_04: { route: '/rfps', label: 'Check Duplicates' },
+    STEP_05: { route: `/underwriting/${rfpId}`, label: 'View QS Score' },
+    STEP_06: { route: `/rfps/${rfpId}`, label: 'Assign & Setup' },
+    STEP_07: { route: '/census', label: 'Process Census' },
+    STEP_08: { route: '/plan-design', label: 'Enter Benefits' },
+    STEP_09: { route: '/plan-design', label: 'Enter Terms' },
+    STEP_10: { route: '/plan-design', label: 'Build Plans' },
+    STEP_11: { route: '/rating', label: 'Enter Rates' },
+    STEP_12: { route: `/underwriting/${rfpId}`, label: 'Risk Assessment' },
+    STEP_13: { route: `/underwriting/${rfpId}`, label: 'Triage Queue' },
+    STEP_14: { route: '/plan-design', label: 'Build Plan Stack' },
+    STEP_15: { route: '/rating', label: 'Calculate Rates' },
+    STEP_16: { route: `/underwriting/${rfpId}`, label: 'Claims Review' },
+    STEP_17: { route: '/proposals', label: 'Generate Quote' },
+    STEP_18: { route: '/policies', label: 'Bind Policy' },
+  };
+  return map[stepId] || null;
+}
+
 export function ExpandedTracker({ workflow }: ExpandedTrackerProps) {
+  const navigate = useNavigate();
   const [expandedPhases, setExpandedPhases] = useState<WorkflowPhase[]>([
     WorkflowPhase.ASSISTANT_INTAKE,
     WorkflowPhase.ASSOCIATE_SETUP,
@@ -17,7 +45,7 @@ export function ExpandedTracker({ workflow }: ExpandedTrackerProps) {
   ]);
 
   const phases = [WorkflowPhase.ASSISTANT_INTAKE, WorkflowPhase.ASSOCIATE_SETUP, WorkflowPhase.UNDERWRITER_RATING];
-  const handoffPoints = [6, 12]; // After step 6 and 12
+  const handoffPoints = [6, 12];
 
   const togglePhase = (phase: WorkflowPhase) => {
     setExpandedPhases(prev =>
@@ -115,6 +143,8 @@ export function ExpandedTracker({ workflow }: ExpandedTrackerProps) {
                     const isComplete = step.status === StepStatus.COMPLETE;
                     const isActive = [StepStatus.IN_PROGRESS, StepStatus.AI_PROCESSING, StepStatus.NEEDS_REVIEW].includes(step.status);
                     const isBlocked = step.status === StepStatus.BLOCKED;
+                    const action = getStepAction(def.id, workflow.rfpId);
+                    const showAction = isActive || isBlocked || (isComplete && step.aiCompleted);
 
                     return (
                       <div key={def.id} className={cn(
@@ -148,7 +178,7 @@ export function ExpandedTracker({ workflow }: ExpandedTrackerProps) {
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className={cn('text-sm font-medium', isComplete ? 'text-foreground' : isActive ? 'text-foreground' : 'text-muted-foreground')}>
                               {def.sequenceNumber}. {def.name}
                             </span>
@@ -187,6 +217,23 @@ export function ExpandedTracker({ workflow }: ExpandedTrackerProps) {
                           )}
                           {step.notes && isComplete && (
                             <p className="text-xs text-muted-foreground mt-1">{step.notes}</p>
+                          )}
+
+                          {/* Action button */}
+                          {action && showAction && (
+                            <Button
+                              size="sm"
+                              variant={isActive ? 'default' : isBlocked ? 'outline' : 'ghost'}
+                              className={cn(
+                                'mt-2 h-7 text-xs gap-1.5',
+                                isBlocked && 'border-orange-200 text-orange-700 hover:bg-orange-50',
+                                isComplete && step.aiCompleted && 'text-purple-700 hover:bg-purple-50'
+                              )}
+                              onClick={() => navigate(action.route)}
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              {isComplete && step.aiCompleted ? `Review: ${action.label}` : action.label}
+                            </Button>
                           )}
                         </div>
                       </div>
