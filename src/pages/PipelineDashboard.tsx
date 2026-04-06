@@ -8,6 +8,7 @@ import { MOCK_WORKFLOWS, MOCK_PIPELINE_STATS, MOCK_BOTTLENECKS, MOCK_TEAM, MOCK_
 import { ArrowRight, AlertTriangle, Sparkles, Users, TrendingUp, Clock, CheckCircle2, XCircle, UserCheck, Briefcase, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { usePersona } from '@/contexts/PersonaContext';
 
 export default function PipelineDashboard() {
   const navigate = useNavigate();
