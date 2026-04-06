@@ -205,7 +205,7 @@ export default function PipelineDashboard() {
           {/* Active Quotes */}
           <div>
             <h2 className="text-lg font-semibold text-foreground mb-3">Active Quotes ({activeWorkflows.length})</h2>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {activeWorkflows.map(wf => (
                 <QuoteTracker
                   key={wf.id}
