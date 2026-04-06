@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Mail, Users, Layers, Calculator,
   FileOutput, Shield, RefreshCw, BarChart3, Settings, ChevronLeft,
-  ChevronRight, Zap, GitBranch, Upload
+  ChevronRight, Zap, GitBranch, Upload, BookOpen
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -18,10 +18,12 @@ const allNavItems = [
   { label: 'Census', icon: Users, path: '/census' },
   { label: 'Plan Design', icon: Layers, path: '/plan-design' },
   { label: 'Rating Engine', icon: Calculator, path: '/rating' },
+  { label: 'Factor Lookup', icon: BookOpen, path: '/rating-manual' },
   { label: 'Proposals', icon: FileOutput, path: '/proposals' },
   { label: 'Policies', icon: Shield, path: '/policies' },
   { label: 'Renewals', icon: RefreshCw, path: '/renewals' },
   { label: 'Analytics', icon: BarChart3, path: '/analytics' },
+  { label: 'Rating Manuals', icon: BookOpen, path: '/admin/rating-manuals' },
   { label: 'Admin', icon: Settings, path: '/admin' },
 ];
 
