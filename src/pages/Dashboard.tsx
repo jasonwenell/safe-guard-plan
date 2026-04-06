@@ -282,13 +282,13 @@ function UnderwriterDashboard() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Underwriter Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Juice — here's your underwriting queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Juice — here's your underwriting queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/underwriting')}>
           <CardContent className="p-4">
             <Zap className="w-5 h-5 text-amber-500 mb-1" />
