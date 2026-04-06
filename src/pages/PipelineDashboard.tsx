@@ -40,9 +40,9 @@ export default function PipelineDashboard() {
           <TabsTrigger value="underwriter" className="gap-1.5"><Shield className="w-3.5 h-3.5" /> UW Queue</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-5">
           {/* Pipeline Funnel */}
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-4">
             {[
               { label: 'Intake', count: stats.intake, avg: `${stats.avgIntakeDays}d avg`, color: 'bg-indigo-500', borderColor: 'border-indigo-200', bgColor: 'bg-indigo-50' },
               { label: 'Setup', count: stats.setup, avg: `${stats.avgSetupDays}d avg`, color: 'bg-teal-500', borderColor: 'border-teal-200', bgColor: 'bg-teal-50' },
