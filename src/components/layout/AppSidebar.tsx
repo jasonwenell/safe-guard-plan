@@ -18,6 +18,7 @@ const allNavItems = [
   { label: 'Census', icon: Users, path: '/census' },
   { label: 'Plan Design', icon: Layers, path: '/plan-design' },
   { label: 'Rating Engine', icon: Calculator, path: '/rating' },
+  { label: 'Factor Lookup', icon: BookOpen, path: '/rating-manual' },
   { label: 'Proposals', icon: FileOutput, path: '/proposals' },
   { label: 'Policies', icon: Shield, path: '/policies' },
   { label: 'Renewals', icon: RefreshCw, path: '/renewals' },
