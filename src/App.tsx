@@ -34,6 +34,8 @@ const App = () => (
         <AppLayout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/pipeline" element={<PipelineDashboard />} />
+            <Route path="/workflow/:rfpId" element={<WorkflowDetail />} />
             <Route path="/rfps" element={<RFPQuoteLog />} />
             <Route path="/rfps/new" element={<RFPDetail />} />
             <Route path="/rfps/:id" element={<RFPDetail />} />

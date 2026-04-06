@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
+  { label: 'Pipeline Tracker', icon: GitBranch, path: '/pipeline', badge: '10' },
   { label: 'RFP Quote Log', icon: FileText, path: '/rfps' },
   { label: 'AI Underwriting', icon: Zap, path: '/underwriting', badge: '5' },
   { label: 'Email Intake', icon: Mail, path: '/email-intake', badge: '4' },
