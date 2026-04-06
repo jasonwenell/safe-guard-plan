@@ -368,10 +368,10 @@ function MasterDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">SLEQ Platform overview — {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="text-sm text-muted-foreground mt-1">SLEQ Platform overview — {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
