@@ -23,6 +23,7 @@ const allNavItems = [
   { label: 'Policies', icon: Shield, path: '/policies' },
   { label: 'Renewals', icon: RefreshCw, path: '/renewals' },
   { label: 'Analytics', icon: BarChart3, path: '/analytics' },
+  { label: 'Rating Manuals', icon: BookOpen, path: '/admin/rating-manuals' },
   { label: 'Admin', icon: Settings, path: '/admin' },
 ];
 

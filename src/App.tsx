@@ -51,6 +51,8 @@ const App = () => (
               <Route path="/underwriting" element={<AIUnderwriting />} />
               <Route path="/underwriting/:rfpId" element={<AIUnderwriting />} />
               <Route path="/rating" element={<RatingEngine />} />
+              <Route path="/rating-manual" element={<FactorLookup />} />
+              <Route path="/admin/rating-manuals" element={<RatingManualManager />} />
               <Route path="/proposals" element={<Proposals />} />
               <Route path="/policies" element={<PolicyAdmin />} />
               <Route path="/renewals" element={<Renewals />} />
