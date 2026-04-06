@@ -226,17 +226,23 @@ export default function PipelineDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="assistant">
-          <RoleQueue role="ASSISTANT" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'ASSISTANT') && (
+          <TabsContent value="assistant">
+            <RoleQueue role="ASSISTANT" />
+          </TabsContent>
+        )}
 
-        <TabsContent value="associate">
-          <RoleQueue role="ASSOCIATE" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'ASSOCIATE') && (
+          <TabsContent value="associate">
+            <RoleQueue role="ASSOCIATE" />
+          </TabsContent>
+        )}
 
-        <TabsContent value="underwriter">
-          <RoleQueue role="UNDERWRITER" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'UNDERWRITER') && (
+          <TabsContent value="underwriter">
+            <RoleQueue role="UNDERWRITER" />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
