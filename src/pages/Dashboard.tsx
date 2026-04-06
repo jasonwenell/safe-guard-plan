@@ -388,7 +388,7 @@ function MasterDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <Card className="lg:col-span-1 border shadow-sm">
           <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold">Pipeline Distribution</CardTitle></CardHeader>
           <CardContent className="space-y-3">
