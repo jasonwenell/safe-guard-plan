@@ -19,6 +19,8 @@ import PolicyAdmin from "./pages/PolicyAdmin";
 import Renewals from "./pages/Renewals";
 import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
+import PipelineDashboard from "./pages/PipelineDashboard";
+import WorkflowDetail from "./pages/WorkflowDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
         <AppLayout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/pipeline" element={<PipelineDashboard />} />
+            <Route path="/workflow/:rfpId" element={<WorkflowDetail />} />
             <Route path="/rfps" element={<RFPQuoteLog />} />
             <Route path="/rfps/new" element={<RFPDetail />} />
             <Route path="/rfps/:id" element={<RFPDetail />} />

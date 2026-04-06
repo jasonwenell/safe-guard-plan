@@ -2,13 +2,14 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Mail, Users, Layers, Calculator,
   FileOutput, Shield, RefreshCw, BarChart3, Settings, ChevronLeft,
-  ChevronRight, Zap
+  ChevronRight, Zap, GitBranch
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
+  { label: 'Pipeline Tracker', icon: GitBranch, path: '/pipeline', badge: '10' },
   { label: 'RFP Quote Log', icon: FileText, path: '/rfps' },
   { label: 'AI Underwriting', icon: Zap, path: '/underwriting', badge: '5' },
   { label: 'Email Intake', icon: Mail, path: '/email-intake', badge: '4' },
