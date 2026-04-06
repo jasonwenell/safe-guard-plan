@@ -183,7 +183,7 @@ export default function PipelineDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {MOCK_TEAM.map(member => (
                   <div key={member.id} className="flex items-center gap-2 p-2 rounded-md bg-muted/30">
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground shrink-0">
