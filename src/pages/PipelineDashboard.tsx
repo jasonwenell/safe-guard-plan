@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
+import { RoleQueue } from '@/components/workflow/RoleQueue';
 import { MOCK_WORKFLOWS, MOCK_PIPELINE_STATS, MOCK_BOTTLENECKS, MOCK_TEAM, MOCK_AI_IMPACT } from '@/data/workflowMockData';
-import { ArrowRight, AlertTriangle, Sparkles, Users, TrendingUp, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowRight, AlertTriangle, Sparkles, Users, TrendingUp, Clock, CheckCircle2, XCircle, UserCheck, Briefcase, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
