@@ -166,13 +166,13 @@ function AssistantDashboard() {
   const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Assistant Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Traci — here's your intake queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Traci — here's your intake queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/email-intake')}>
           <CardContent className="p-4">
             <Mail className="w-5 h-5 text-info mb-1" />
@@ -225,13 +225,13 @@ function AssociateDashboard() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Associate Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Heidi — here's your setup queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Heidi — here's your setup queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/census')}>
           <CardContent className="p-4">
             <Users className="w-5 h-5 text-teal-600 mb-1" />
@@ -282,13 +282,13 @@ function UnderwriterDashboard() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Underwriter Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back, Juice — here's your underwriting queue</p>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back, Juice — here's your underwriting queue</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/underwriting')}>
           <CardContent className="p-4">
             <Zap className="w-5 h-5 text-amber-500 mb-1" />
@@ -368,10 +368,10 @@ function MasterDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">SLEQ Platform overview — {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="text-sm text-muted-foreground mt-1">SLEQ Platform overview — {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -388,7 +388,7 @@ function MasterDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <Card className="lg:col-span-1 border shadow-sm">
           <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold">Pipeline Distribution</CardTitle></CardHeader>
           <CardContent className="space-y-3">
