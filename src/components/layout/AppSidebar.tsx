@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Mail, Users, Layers, Calculator,
   FileOutput, Shield, RefreshCw, BarChart3, Settings, ChevronLeft,
-  ChevronRight, Zap
+  ChevronRight, Zap, GitBranch
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
