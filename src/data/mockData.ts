@@ -482,7 +482,95 @@ export const MOCK_CENSUS_MEMBERS: CensusMember[] = [
 ];
 
 export const MOCK_SCENARIOS: Scenario[] = [
-  { id: 's1', rfpId: 'rfp-001', name: 'Option A - $50K Specific', sequenceNumber: 1, isLocked: false, contractBasis: '12/12', specificDeductible: 50000, aggregateDeductible: 250000, manualRate: 142.50, finalRate: 142.50, uwAdjustmentFactor: 1.0 },
-  { id: 's2', rfpId: 'rfp-001', name: 'Option B - $75K Specific', sequenceNumber: 2, isLocked: false, contractBasis: '12/12', specificDeductible: 75000, aggregateDeductible: 300000, manualRate: 118.75, finalRate: 112.81, uwAdjustmentFactor: 0.95 },
-  { id: 's3', rfpId: 'rfp-001', name: 'Option C - $100K Specific', sequenceNumber: 3, isLocked: false, contractBasis: '12/15', specificDeductible: 100000, aggregateDeductible: 350000, manualRate: 96.20, experienceRate: 88.40, finalRate: 91.30, uwAdjustmentFactor: 0.95 },
+  {
+    id: 's1', rfpId: 'rfp-001', name: 'Option A - $50K Specific', sequenceNumber: 1, isLocked: false,
+    contractBasis: '12/12', specificDeductible: 50000,
+    aggregateCorridorPercent: 125, expectedClaimsPEPM: 450, aggregateAttachmentPoint: 1248750, minimumAggregateDeductible: 1123875,
+    specificManualRate: 142.50, specificFinalRate: 142.50, specificAnnualPremium: 487350,
+    aggregateManualRate: 38.50, aggregateFinalRate: 38.50, aggregateAnnualPremium: 131670,
+    compositeFinalRate: 181.00, totalAnnualPremium: 619020,
+    manualRate: 142.50, finalRate: 181.00, uwAdjustmentFactor: 1.0,
+    noNewLasers: false,
+  },
+  {
+    id: 's2', rfpId: 'rfp-001', name: 'Option B - $75K Specific', sequenceNumber: 2, isLocked: false,
+    contractBasis: '12/12', specificDeductible: 75000,
+    aggregateCorridorPercent: 125, expectedClaimsPEPM: 450, aggregateAttachmentPoint: 1248750, minimumAggregateDeductible: 1123875,
+    specificManualRate: 118.75, specificExperienceRate: 112.00, specificFinalRate: 112.81, specificAnnualPremium: 385811,
+    aggregateManualRate: 34.20, aggregateFinalRate: 34.20, aggregateAnnualPremium: 116964,
+    compositeFinalRate: 147.01, totalAnnualPremium: 502775,
+    manualRate: 118.75, experienceRate: 112.00, finalRate: 147.01, uwAdjustmentFactor: 0.95,
+    rateCapPercent: 15, rateCapPremiumAdder: 4.80,
+    noNewLasers: true, noNewLaserPremiumAdder: 3.20,
+  },
+  {
+    id: 's3', rfpId: 'rfp-001', name: 'Option C - $100K Specific', sequenceNumber: 3, isLocked: false,
+    contractBasis: '12/15', specificDeductible: 100000,
+    aggregateCorridorPercent: 125, expectedClaimsPEPM: 450, aggregateAttachmentPoint: 1248750, minimumAggregateDeductible: 1123875,
+    specificManualRate: 96.20, specificExperienceRate: 88.40, specificFinalRate: 91.30, specificAnnualPremium: 312246,
+    aggregateManualRate: 30.50, aggregateFinalRate: 30.50, aggregateAnnualPremium: 104310,
+    compositeFinalRate: 121.80, totalAnnualPremium: 416556,
+    manualRate: 96.20, experienceRate: 88.40, finalRate: 121.80, uwAdjustmentFactor: 0.95,
+    aggregatingSpecificDeductible: 50000, asdPremiumReduction: 8.40,
+    noNewLasers: false,
+  },
 ];
+
+// Gap 4: Claims Experience Mock Data
+export const MOCK_CLAIMS_EXPERIENCE: ClaimsExperienceMonth[] = [
+  { id: 'ce1', rfpId: 'rfp-002', periodStart: '2025-07-01', periodEnd: '2025-07-31', enrollmentCount: 182, memberCount: 305, medicalClaimsPaid: 52400, pharmacyClaimsPaid: 18200, totalClaimsPaid: 70600, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce2', rfpId: 'rfp-002', periodStart: '2025-08-01', periodEnd: '2025-08-31', enrollmentCount: 185, memberCount: 310, medicalClaimsPaid: 48100, pharmacyClaimsPaid: 16800, totalClaimsPaid: 64900, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce3', rfpId: 'rfp-002', periodStart: '2025-09-01', periodEnd: '2025-09-30', enrollmentCount: 185, memberCount: 312, medicalClaimsPaid: 95200, pharmacyClaimsPaid: 17500, totalClaimsPaid: 112700, largeClaimsCount: 1, largeClaimsTotal: 62400, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce4', rfpId: 'rfp-002', periodStart: '2025-10-01', periodEnd: '2025-10-31', enrollmentCount: 184, memberCount: 308, medicalClaimsPaid: 61500, pharmacyClaimsPaid: 19800, totalClaimsPaid: 81300, largeClaimsCount: 1, largeClaimsTotal: 28100, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce5', rfpId: 'rfp-002', periodStart: '2025-11-01', periodEnd: '2025-11-30', enrollmentCount: 186, memberCount: 315, medicalClaimsPaid: 58700, pharmacyClaimsPaid: 21200, totalClaimsPaid: 79900, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce6', rfpId: 'rfp-002', periodStart: '2025-12-01', periodEnd: '2025-12-31', enrollmentCount: 185, memberCount: 312, medicalClaimsPaid: 72400, pharmacyClaimsPaid: 18900, totalClaimsPaid: 91300, largeClaimsCount: 1, largeClaimsTotal: 35200, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce7', rfpId: 'rfp-002', periodStart: '2026-01-01', periodEnd: '2026-01-31', enrollmentCount: 188, memberCount: 318, medicalClaimsPaid: 55300, pharmacyClaimsPaid: 17600, totalClaimsPaid: 72900, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce8', rfpId: 'rfp-002', periodStart: '2026-02-01', periodEnd: '2026-02-28', enrollmentCount: 187, memberCount: 316, medicalClaimsPaid: 49800, pharmacyClaimsPaid: 16400, totalClaimsPaid: 66200, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce9', rfpId: 'rfp-002', periodStart: '2026-03-01', periodEnd: '2026-03-31', enrollmentCount: 185, memberCount: 312, medicalClaimsPaid: 63100, pharmacyClaimsPaid: 19400, totalClaimsPaid: 82500, largeClaimsCount: 1, largeClaimsTotal: 22800, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce10', rfpId: 'rfp-002', periodStart: '2026-04-01', periodEnd: '2026-04-30', enrollmentCount: 186, memberCount: 314, medicalClaimsPaid: 51200, pharmacyClaimsPaid: 18100, totalClaimsPaid: 69300, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce11', rfpId: 'rfp-002', periodStart: '2026-05-01', periodEnd: '2026-05-31', enrollmentCount: 187, memberCount: 316, medicalClaimsPaid: 57800, pharmacyClaimsPaid: 20100, totalClaimsPaid: 77900, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+  { id: 'ce12', rfpId: 'rfp-002', periodStart: '2026-06-01', periodEnd: '2026-06-30', enrollmentCount: 188, memberCount: 318, medicalClaimsPaid: 55300, pharmacyClaimsPaid: 19100, totalClaimsPaid: 74400, largeClaimsCount: 0, largeClaimsTotal: 0, isComplete: true, source: 'AI_EXTRACTED' },
+];
+
+export const MOCK_LARGE_CLAIMANTS: LargeClaimant[] = [
+  { id: 'lc1', rfpId: 'rfp-002', claimantReference: 'Claimant A', age: 52, gender: 'F', relationship: 'EMPLOYEE', diagnosisCategory: 'Oncology', diagnosisDetail: 'Stage 3 breast cancer, active chemotherapy', totalPaidToDate: 180200, amountAboveSpecific: 105200, treatmentStatus: 'ACTIVE', trendDirection: 'INCREASING', expectedFutureCost: 220000, isLasered: false, source: 'AI_EXTRACTED' },
+  { id: 'lc2', rfpId: 'rfp-002', claimantReference: 'Claimant B', age: 34, gender: 'M', relationship: 'SPOUSE', diagnosisCategory: 'Neonatal', diagnosisDetail: 'Premature birth NICU stay — 42 days', totalPaidToDate: 92400, amountAboveSpecific: 17400, treatmentStatus: 'COMPLETED', trendDirection: 'DECREASING', isLasered: false, source: 'AI_EXTRACTED' },
+  { id: 'lc3', rfpId: 'rfp-002', claimantReference: 'Claimant C', age: 61, gender: 'F', relationship: 'EMPLOYEE', diagnosisCategory: 'Cardiac', diagnosisDetail: 'Triple bypass recovery, cardiac rehab', totalPaidToDate: 67800, amountAboveSpecific: 0, treatmentStatus: 'ONGOING_CHRONIC', trendDirection: 'STABLE', expectedFutureCost: 45000, isLasered: false, source: 'AI_EXTRACTED' },
+];
+
+export const MOCK_PRIOR_YEAR: PriorYearSummary = {
+  id: 'py1', rfpId: 'rfp-002', policyYear: '2025-2026',
+  specificDeductible: 75000, aggregateCorridorPercent: 125, contractBasis: '12/12',
+  specificRatePMPM: 218.00, aggregateRatePMPM: 34.00, compositeRatePMPM: 252.00,
+  totalAnnualPremium: 922320, totalClaimsPaid: 874200, lossRatio: 0.62,
+  memberMonths: 3660, largeClaimantCount: 2, enrollmentAverage: 180,
+  carrierName: 'Pan American', tpaName: 'Integrated Medical Solutions',
+};
+
+// Gap 9: Communications
+export const MOCK_COMMUNICATIONS: CaseCommunication[] = [
+  { id: 'comm1', rfpId: 'rfp-001', commType: 'AUTO', direction: 'INBOUND', contactName: 'Jane Smith', contactEmail: 'jsmith@asrhealthbenefits.com', subject: 'RFP received via email', body: 'RFP received via email to quotes@tpac.com with 3 attachments.', isAutoGenerated: true, createdAt: '2026-04-01T09:30:00Z' },
+  { id: 'comm2', rfpId: 'rfp-001', commType: 'PHONE_CALL', direction: 'OUTBOUND', contactName: 'Jane Smith', subject: 'Census confirmation call', body: 'Called to confirm census is for correct group. Jane confirmed — correct file.', linkedStepId: 'STEP_07', isAutoGenerated: false, createdAt: '2026-04-03T14:00:00Z' },
+  { id: 'comm3', rfpId: 'rfp-001', commType: 'EMAIL_SENT', direction: 'OUTBOUND', contactName: 'Jane Smith', contactEmail: 'jsmith@asrhealthbenefits.com', subject: 'Proposal: Midwest Mfg Stop-Loss Proposal', body: 'Please find attached the stop-loss proposal for Midwest Manufacturing Corp.', attachments: ['ACME_Proposal_2026.pdf'], linkedStepId: 'STEP_17', isAutoGenerated: false, createdAt: '2026-04-05T10:00:00Z' },
+  { id: 'comm4', rfpId: 'rfp-001', commType: 'FOLLOW_UP', direction: 'OUTBOUND', contactName: 'Jane Smith', contactEmail: 'jsmith@asrhealthbenefits.com', subject: 'Follow-up: Proposal sent Apr 5', body: 'Following up on proposal sent April 5. Checking on decision timeline.', isAutoGenerated: false, createdAt: '2026-04-10T09:00:00Z' },
+];
+
+// Gap 10: Outcome
+export const MOCK_OUTCOMES: QuoteOutcome[] = [
+  { id: 'out1', rfpId: 'rfp-007', outcome: 'WON', outcomeDate: '2026-03-15', acceptedScenarioId: 's2', decisiveFactors: ['Price', 'Terms', 'Relationship'], competitorsQuoted: ['HM Insurance', 'Voya'], notes: 'Strong relationship with Lockton sealed the deal.' },
+  { id: 'out2', rfpId: 'rfp-008', outcome: 'DECLINED', outcomeDate: '2026-04-01', lostReason: 'Coverage Scope', notes: 'Group too small and high-risk SIC code. Outside appetite.' },
+];
+
+// Gap 3: Binding
+export const MOCK_BINDING: BindingRecord = {
+  id: 'bind1', rfpId: 'rfp-007', acceptedScenarioId: 's2', acceptedScenarioName: 'Option B - $75K Specific',
+  acceptedDate: '2026-03-15', acceptedByName: 'Tom Wilson (PHP Network Inc)', acceptedByEmail: 'tom@phpnetwork.com',
+  acceptanceMethod: 'email', bindingStatus: 'policy_setup',
+  steps: [
+    { id: 'STEP_18A', name: 'Quote Acceptance Received', status: 'complete', ownerRole: 'UNDERWRITER', completedAt: '2026-03-15' },
+    { id: 'STEP_18B', name: 'Terms Confirmation & Binder Letter', status: 'complete', ownerRole: 'UNDERWRITER', completedAt: '2026-03-18' },
+    { id: 'STEP_18C', name: 'Policy Setup', status: 'in_progress', ownerRole: 'ASSOCIATE' },
+    { id: 'STEP_18D', name: 'Implementation Handoff', status: 'pending', ownerRole: 'SYSTEM' },
+    { id: 'STEP_18E', name: 'Policy Document Issuance', status: 'pending', ownerRole: 'ASSOCIATE' },
+  ],
+};
