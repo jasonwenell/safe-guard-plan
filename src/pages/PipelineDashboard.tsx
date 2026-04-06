@@ -26,13 +26,13 @@ export default function PipelineDashboard() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 lg:p-8 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Pipeline Overview</h1>
-        <p className="text-sm text-muted-foreground">Real-time view of all active quotes across the workflow</p>
+        <p className="text-sm text-muted-foreground mt-1">Real-time view of all active quotes across the workflow</p>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="overview" className="space-y-5">
         <TabsList>
           <TabsTrigger value="overview" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Overview</TabsTrigger>
           <TabsTrigger value="assistant" className="gap-1.5"><UserCheck className="w-3.5 h-3.5" /> Assistant Queue</TabsTrigger>
@@ -40,9 +40,9 @@ export default function PipelineDashboard() {
           <TabsTrigger value="underwriter" className="gap-1.5"><Shield className="w-3.5 h-3.5" /> UW Queue</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-5">
           {/* Pipeline Funnel */}
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-4">
             {[
               { label: 'Intake', count: stats.intake, avg: `${stats.avgIntakeDays}d avg`, color: 'bg-indigo-500', borderColor: 'border-indigo-200', bgColor: 'bg-indigo-50' },
               { label: 'Setup', count: stats.setup, avg: `${stats.avgSetupDays}d avg`, color: 'bg-teal-500', borderColor: 'border-teal-200', bgColor: 'bg-teal-50' },
@@ -68,7 +68,7 @@ export default function PipelineDashboard() {
           </div>
 
           {/* Weekly Stats + Health */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <Card>
               <CardContent className="p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">This Week</p>
@@ -183,7 +183,7 @@ export default function PipelineDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {MOCK_TEAM.map(member => (
                   <div key={member.id} className="flex items-center gap-2 p-2 rounded-md bg-muted/30">
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground shrink-0">
@@ -205,7 +205,7 @@ export default function PipelineDashboard() {
           {/* Active Quotes */}
           <div>
             <h2 className="text-lg font-semibold text-foreground mb-3">Active Quotes ({activeWorkflows.length})</h2>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {activeWorkflows.map(wf => (
                 <QuoteTracker
                   key={wf.id}
