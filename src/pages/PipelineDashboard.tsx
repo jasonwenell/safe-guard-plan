@@ -8,9 +8,11 @@ import { MOCK_WORKFLOWS, MOCK_PIPELINE_STATS, MOCK_BOTTLENECKS, MOCK_TEAM, MOCK_
 import { ArrowRight, AlertTriangle, Sparkles, Users, TrendingUp, Clock, CheckCircle2, XCircle, UserCheck, Briefcase, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { usePersona } from '@/contexts/PersonaContext';
 
 export default function PipelineDashboard() {
   const navigate = useNavigate();
+  const { role } = usePersona();
   const stats = MOCK_PIPELINE_STATS;
   const aiImpact = MOCK_AI_IMPACT;
 
@@ -32,12 +34,18 @@ export default function PipelineDashboard() {
         <p className="text-sm text-muted-foreground mt-1">Real-time view of all active quotes across the workflow</p>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-5">
+      <Tabs defaultValue={role === 'MASTER' ? 'overview' : role === 'ASSISTANT' ? 'assistant' : role === 'ASSOCIATE' ? 'associate' : 'underwriter'} className="space-y-5">
         <TabsList>
           <TabsTrigger value="overview" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Overview</TabsTrigger>
-          <TabsTrigger value="assistant" className="gap-1.5"><UserCheck className="w-3.5 h-3.5" /> Assistant Queue</TabsTrigger>
-          <TabsTrigger value="associate" className="gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Associate Queue</TabsTrigger>
-          <TabsTrigger value="underwriter" className="gap-1.5"><Shield className="w-3.5 h-3.5" /> UW Queue</TabsTrigger>
+          {(role === 'MASTER' || role === 'ASSISTANT') && (
+            <TabsTrigger value="assistant" className="gap-1.5"><UserCheck className="w-3.5 h-3.5" /> Assistant Queue</TabsTrigger>
+          )}
+          {(role === 'MASTER' || role === 'ASSOCIATE') && (
+            <TabsTrigger value="associate" className="gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Associate Queue</TabsTrigger>
+          )}
+          {(role === 'MASTER' || role === 'UNDERWRITER') && (
+            <TabsTrigger value="underwriter" className="gap-1.5"><Shield className="w-3.5 h-3.5" /> UW Queue</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="overview" className="space-y-5">
@@ -218,17 +226,23 @@ export default function PipelineDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="assistant">
-          <RoleQueue role="ASSISTANT" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'ASSISTANT') && (
+          <TabsContent value="assistant">
+            <RoleQueue role="ASSISTANT" />
+          </TabsContent>
+        )}
 
-        <TabsContent value="associate">
-          <RoleQueue role="ASSOCIATE" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'ASSOCIATE') && (
+          <TabsContent value="associate">
+            <RoleQueue role="ASSOCIATE" />
+          </TabsContent>
+        )}
 
-        <TabsContent value="underwriter">
-          <RoleQueue role="UNDERWRITER" />
-        </TabsContent>
+        {(role === 'MASTER' || role === 'UNDERWRITER') && (
+          <TabsContent value="underwriter">
+            <RoleQueue role="UNDERWRITER" />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
