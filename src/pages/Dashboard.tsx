@@ -334,11 +334,11 @@ function UnderwriterDashboard() {
 
       {/* Quick action buttons for UW */}
       <div className="flex gap-3">
-        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/underwriting')}>
-          <Zap className="w-4 h-4" /> Open AI Underwriting
+        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/rfps')}>
+          <Zap className="w-4 h-4" /> Open Quotes
         </Button>
-        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/rating')}>
-          <Calculator className="w-4 h-4" /> Rating Engine
+        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/factor-lookup')}>
+          <Calculator className="w-4 h-4" /> Factor Lookup
         </Button>
         <Button variant="outline" className="gap-1.5" onClick={() => navigate('/analytics')}>
           <TrendingUp className="w-4 h-4" /> Analytics
