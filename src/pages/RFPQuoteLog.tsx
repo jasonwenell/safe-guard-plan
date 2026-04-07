@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_RFPS } from '@/data/mockData';
+import { useRfpContext } from '@/contexts/RfpContext';
 import { MOCK_QUOTABILITY_SCORES } from '@/data/underwritingMockData';
 import { RFP, RFPStatus, STATUS_LABELS } from '@/types/sleq';
 import { StatusBadge, RushBadge, DuplicateBadge, AIBadge, TypeBadge, CensusStatusPill, SetupStatusPill } from '@/components/shared/StatusBadges';
