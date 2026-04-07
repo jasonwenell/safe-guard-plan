@@ -1,7 +1,7 @@
 import { PersonaRole } from '@/contexts/PersonaContext';
 import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowInstance } from '@/types/workflow';
 import {
-  FileText, Upload, Users, ClipboardList, Layers, Activity,
+  FileText, Upload, Users, Layers, Activity,
   AlertTriangle, Zap, Calculator, FileOutput, Link2, MessageSquare,
   Trophy, TrendingUp, GitBranch
 } from 'lucide-react';
@@ -23,8 +23,7 @@ export const WORKSPACE_TABS: WorkspaceTab[] = [
   { id: 'documents', label: 'Documents', icon: Upload, roles: ['ASSISTANT', 'ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_02'], showStatusIcon: true, showForNewQuote: true },
   // Phase 2: Setup
   { id: 'census', label: 'Census', icon: Users, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_07'], showStatusIcon: true, showForNewQuote: false },
-  { id: 'benefits', label: 'Benefits', icon: ClipboardList, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_08'], showStatusIcon: true, showForNewQuote: false },
-  { id: 'plan-stack', label: 'Plan Stack', icon: Layers, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_09', 'STEP_10'], showStatusIcon: true, showForNewQuote: false },
+  { id: 'plan-stack', label: 'Plan Stack', icon: Layers, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_08', 'STEP_09', 'STEP_10'], showStatusIcon: true, showForNewQuote: false },
   { id: 'claims', label: 'Claims', icon: Activity, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_11'], showStatusIcon: true, showForNewQuote: false },
   { id: 'risk', label: 'Risk', icon: AlertTriangle, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_12'], showStatusIcon: true, showForNewQuote: false },
   // Phase 3: Underwriting
@@ -81,7 +80,7 @@ export function getDefaultTabForStep(stepId: string): string {
   const map: Record<string, string> = {
     STEP_01: 'intake', STEP_02: 'documents', STEP_03: 'intake',
     STEP_04: 'intake', STEP_05: 'intake', STEP_06: 'intake',
-    STEP_07: 'census', STEP_08: 'benefits', STEP_09: 'plan-stack',
+    STEP_07: 'census', STEP_08: 'plan-stack', STEP_09: 'plan-stack',
     STEP_10: 'plan-stack', STEP_11: 'claims', STEP_12: 'risk',
     STEP_13: 'ai-package', STEP_14: 'plan-stack', STEP_15: 'rating',
     STEP_16: 'ai-package', STEP_17: 'proposals', STEP_18: 'binding',

@@ -8,7 +8,7 @@ interface PlanStackTabProps {
 export function PlanStackTab({ rfpId }: PlanStackTabProps) {
   return (
     <div>
-      {rfpId && <StepActionBanner rfpId={rfpId} tabStepIds={['STEP_09', 'STEP_10']} />}
+      {rfpId && <StepActionBanner rfpId={rfpId} tabStepIds={['STEP_08', 'STEP_09', 'STEP_10']} />}
       <PlanDesign />
     </div>
   );
