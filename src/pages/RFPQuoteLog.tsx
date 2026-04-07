@@ -35,7 +35,7 @@ export default function RFPQuoteLog() {
           <h1 className="text-2xl font-bold text-foreground">RFP Quote Log</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} cases</p>
         </div>
-        <Link to="/rfps/new">
+        <Link to="/quote/new">
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
             New RFP
@@ -113,7 +113,7 @@ export default function RFPQuoteLog() {
                 {filtered.map((rfp) => (
                   <tr
                     key={rfp.id}
-                    onClick={() => navigate(`/rfps/${rfp.id}`)}
+                    onClick={() => navigate(`/quote/${rfp.id}`)}
                     className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${rfp.isRush ? 'border-l-[3px] border-l-destructive' : ''}`}
                   >
                     <td className="py-2.5 px-3 font-mono text-xs font-medium">{rfp.caseNumber}</td>

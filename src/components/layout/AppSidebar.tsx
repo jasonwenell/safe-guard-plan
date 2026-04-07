@@ -1,35 +1,26 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, FileText, Mail, Users, Layers, Calculator,
-  FileOutput, Shield, RefreshCw, BarChart3, Settings, ChevronLeft,
-  ChevronRight, Zap, GitBranch, Upload, BookOpen, Activity, Link2,
-  MessageSquare, TrendingUp, Trophy, Building2
+  LayoutDashboard, FileText, Mail, Calculator,
+  Shield, BarChart3, Settings, ChevronLeft,
+  ChevronRight, Zap, GitBranch, BookOpen, Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { usePersona, PERSONAS, PersonaRole } from '@/contexts/PersonaContext';
 
 const allNavItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'Pipeline Tracker', icon: GitBranch, path: '/pipeline', badge: '10' },
-  { label: 'RFP Quote Log', icon: FileText, path: '/rfps' },
-  { label: 'AI Underwriting', icon: Zap, path: '/underwriting', badge: '5' },
-  { label: 'Email Intake', icon: Mail, path: '/email-intake', badge: '4' },
-  { label: 'Documents', icon: Upload, path: '/documents' },
-  { label: 'Census', icon: Users, path: '/census' },
-  { label: 'Plan Design', icon: Layers, path: '/plan-design' },
-  { label: 'Rating Engine', icon: Calculator, path: '/rating' },
-  { label: 'Factor Lookup', icon: BookOpen, path: '/rating-manual' },
-  { label: 'Proposals', icon: FileOutput, path: '/proposals' },
+  // Core (all roles)
+  { label: 'My Queue', icon: LayoutDashboard, path: '/' },
+  { label: 'Pipeline', icon: GitBranch, path: '/pipeline' },
+  { label: 'All Quotes', icon: FileText, path: '/rfps' },
+  // Assistant only
+  { label: 'Email Inbox', icon: Mail, path: '/email-intake', badge: '4' },
+  // Underwriter tools
+  { label: 'Factor Lookup', icon: BookOpen, path: '/factor-lookup' },
   { label: 'Policies', icon: Shield, path: '/policies' },
-  { label: 'Renewals', icon: RefreshCw, path: '/renewals' },
-  { label: 'Claims Experience', icon: Activity, path: '/claims-experience' },
-  { label: 'Binding', icon: Link2, path: '/binding' },
-  { label: 'Communications', icon: MessageSquare, path: '/communications' },
-  { label: 'Renewal Compare', icon: TrendingUp, path: '/renewals/comparison' },
-  { label: 'Win/Loss', icon: Trophy, path: '/win-loss' },
-  { label: 'Carrier Capacity', icon: Building2, path: '/carrier-capacity' },
   { label: 'Analytics', icon: BarChart3, path: '/analytics' },
+  // Admin only
+  { label: 'Carrier Capacity', icon: Building2, path: '/carrier-capacity' },
   { label: 'Rating Manuals', icon: BookOpen, path: '/admin/rating-manuals' },
   { label: 'Admin', icon: Settings, path: '/admin' },
 ];
@@ -130,7 +121,6 @@ export function AppSidebar() {
           </button>
         )}
 
-        {/* Role picker dropdown */}
         {showRolePicker && (
           <div className="absolute bottom-full left-2 right-2 mb-1 bg-card border border-border rounded-lg shadow-lg p-1 z-50">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1">Switch Persona</p>

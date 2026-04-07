@@ -37,21 +37,24 @@ function getAssistantTodos(): TodoTask[] {
     if (!currentDef || !currentStep) return;
     if (currentDef.phase !== WorkflowPhase.ASSISTANT_INTAKE) return;
 
+    const stepTabMap: Record<string, string> = {
+      STEP_01: 'intake', STEP_02: 'documents', STEP_03: 'intake',
+      STEP_04: 'intake', STEP_05: 'intake', STEP_06: 'intake',
+    };
     tasks.push({
       id: wf.id,
       label: `Step ${currentDef.sequenceNumber}: ${currentDef.shortName}`,
       detail: currentDef.name,
       priority: currentStep.slaStatus === 'overdue' ? 'high' : wf.isRush ? 'high' : 'medium',
-      route: currentDef.sequenceNumber <= 2 ? `/rfps/${wf.rfpId}` : currentDef.sequenceNumber === 2 ? '/documents' : `/rfps/${wf.rfpId}`,
+      route: `/quote/${wf.rfpId}?tab=${stepTabMap[currentDef.id] || 'intake'}`,
       caseNumber: wf.caseNumber,
       groupName: wf.groupName,
       isRush: wf.isRush,
       isOverdue: currentStep.slaStatus === 'overdue',
     });
   });
-  // Add email intake tasks
   tasks.push({ id: 'email-1', label: 'Process new emails', detail: '4 unprocessed emails in inbox', priority: 'medium', route: '/email-intake' });
-  tasks.push({ id: 'doc-1', label: 'Upload documents', detail: '2 cases awaiting document uploads', priority: 'low', route: '/documents' });
+  tasks.push({ id: 'doc-1', label: 'Upload documents', detail: '2 cases awaiting document uploads', priority: 'low', route: '/rfps' });
   return tasks.sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
 }
 
@@ -64,8 +67,9 @@ function getAssociateTodos(): TodoTask[] {
     if (currentDef.phase !== WorkflowPhase.ASSOCIATE_SETUP) return;
 
     const routeMap: Record<string, string> = {
-      STEP_07: '/census', STEP_08: '/plan-design', STEP_09: '/plan-design',
-      STEP_10: '/plan-design', STEP_11: '/rating', STEP_12: `/underwriting/${wf.rfpId}`,
+      STEP_07: `/quote/${wf.rfpId}?tab=census`, STEP_08: `/quote/${wf.rfpId}?tab=benefits`,
+      STEP_09: `/quote/${wf.rfpId}?tab=plan-stack`, STEP_10: `/quote/${wf.rfpId}?tab=plan-stack`,
+      STEP_11: `/quote/${wf.rfpId}?tab=claims`, STEP_12: `/quote/${wf.rfpId}?tab=risk`,
     };
     tasks.push({
       id: wf.id,
@@ -91,9 +95,9 @@ function getUnderwriterTodos(): TodoTask[] {
     if (currentDef.phase !== WorkflowPhase.UNDERWRITER_RATING) return;
 
     const routeMap: Record<string, string> = {
-      STEP_13: `/underwriting/${wf.rfpId}`, STEP_14: '/plan-design',
-      STEP_15: '/rating', STEP_16: `/underwriting/${wf.rfpId}`,
-      STEP_17: '/proposals', STEP_18: '/policies',
+      STEP_13: `/quote/${wf.rfpId}?tab=ai-package`, STEP_14: `/quote/${wf.rfpId}?tab=plan-stack`,
+      STEP_15: `/quote/${wf.rfpId}?tab=rating`, STEP_16: `/quote/${wf.rfpId}?tab=ai-package`,
+      STEP_17: `/quote/${wf.rfpId}?tab=proposals`, STEP_18: `/quote/${wf.rfpId}?tab=binding`,
     };
     tasks.push({
       id: wf.id,
@@ -110,7 +114,7 @@ function getUnderwriterTodos(): TodoTask[] {
   // AI review items
   const aiSteps = MOCK_WORKFLOWS.flatMap(wf =>
     wf.steps.filter(s => s.aiCompleted && s.status === StepStatus.COMPLETE).length > 5
-      ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/workflow/${wf.rfpId}`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
+      ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/quote/${wf.rfpId}?tab=ai-package`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
       : []
   );
   return [...tasks, ...aiSteps].sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
@@ -180,7 +184,7 @@ function AssistantDashboard() {
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Unread Emails</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/documents')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Upload className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-bold">6</p>
@@ -232,14 +236,14 @@ function AssociateDashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/census')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Users className="w-5 h-5 text-teal-600 mb-1" />
             <p className="text-2xl font-bold">3</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Census Pending</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/plan-design')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Layers className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-bold">{myWorkflows.length}</p>
@@ -289,21 +293,21 @@ function UnderwriterDashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/underwriting')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Zap className="w-5 h-5 text-amber-500 mb-1" />
             <p className="text-2xl font-bold">{myWorkflows.length}</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">In My Queue</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rating')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Calculator className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-bold">2</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Ready to Rate</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/proposals')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <FileText className="w-5 h-5 text-emerald-500 mb-1" />
             <p className="text-2xl font-bold">1</p>
@@ -330,11 +334,11 @@ function UnderwriterDashboard() {
 
       {/* Quick action buttons for UW */}
       <div className="flex gap-3">
-        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/underwriting')}>
-          <Zap className="w-4 h-4" /> Open AI Underwriting
+        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/rfps')}>
+          <Zap className="w-4 h-4" /> Open Quotes
         </Button>
-        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/rating')}>
-          <Calculator className="w-4 h-4" /> Rating Engine
+        <Button variant="outline" className="gap-1.5" onClick={() => navigate('/factor-lookup')}>
+          <Calculator className="w-4 h-4" /> Factor Lookup
         </Button>
         <Button variant="outline" className="gap-1.5" onClick={() => navigate('/analytics')}>
           <TrendingUp className="w-4 h-4" /> Analytics
@@ -351,8 +355,8 @@ function MasterDashboard() {
     { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning', path: '/rfps' },
     { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive', path: '/rfps' },
     { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info', path: '/rfps' },
-    { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rating' },
-    { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted', path: '/proposals' },
+    { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rfps' },
+    { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted', path: '/rfps' },
     { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success', path: '/policies' },
     { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground', path: '/analytics' },
   ];
@@ -423,7 +427,7 @@ function MasterDashboard() {
                 </thead>
                 <tbody>
                   {recentRFPs.map((rfp) => (
-                    <tr key={rfp.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/rfps/${rfp.id}`)}>
+                    <tr key={rfp.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/quote/${rfp.id}`)}>
                       <td className="py-2.5 px-4 font-mono text-xs">{rfp.caseNumber}</td>
                       <td className="py-2.5 px-4">
                         <div className="flex items-center gap-2">

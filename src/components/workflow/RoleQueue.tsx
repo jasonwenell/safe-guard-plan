@@ -143,7 +143,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
 
       {/* Action buttons */}
       <div className="flex items-center gap-2 pt-1">
-        <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/workflow/${workflow.rfpId}`)}>
+        <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/quote/${workflow.rfpId}?tab=workflow`)}>
           <Eye className="w-3 h-3" /> View Detail
         </Button>
 
@@ -198,7 +198,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1"
-            onClick={() => navigate(`/underwriting/${workflow.rfpId}`)}
+            onClick={() => navigate(`/quote/${workflow.rfpId}?tab=ai-package`)}
           >
             <Zap className="w-3 h-3" /> Open UW
           </Button>

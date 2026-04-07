@@ -219,7 +219,7 @@ export default function PipelineDashboard() {
                   key={wf.id}
                   workflow={wf}
                   mode="standard"
-                  onViewDetail={() => navigate(`/workflow/${wf.rfpId}`)}
+                  onViewDetail={() => navigate(`/quote/${wf.rfpId}?tab=workflow`)}
                 />
               ))}
             </div>
