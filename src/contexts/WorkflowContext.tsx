@@ -240,6 +240,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     <WorkflowContext.Provider value={{
       workflows,
       getWorkflow,
+      createWorkflow,
       completeStep,
       advanceToNextStep,
       blockStep,
