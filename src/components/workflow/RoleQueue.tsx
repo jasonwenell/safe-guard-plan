@@ -16,8 +16,8 @@ interface RoleQueueProps {
   role: Role;
 }
 
-function getMyWorkflows(role: Role): WorkflowInstance[] {
-  return MOCK_WORKFLOWS.filter(wf => {
+function getMyWorkflows(role: Role, workflows: WorkflowInstance[]): WorkflowInstance[] {
+  return workflows.filter(wf => {
     if (['won', 'lost', 'declined'].includes(wf.lifecycleState)) return false;
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     if (!currentDef) return false;
