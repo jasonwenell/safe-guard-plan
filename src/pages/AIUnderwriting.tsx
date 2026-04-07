@@ -45,13 +45,15 @@ export default function AIUnderwriting({ rfpId: rfpIdProp, embedded }: { rfpId?:
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px]">
+    <div className={embedded ? 'space-y-6' : 'p-6 space-y-6 max-w-[1600px]'}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/underwriting">
-            <Button variant="ghost" size="icon"><ArrowLeft className="w-4 h-4" /></Button>
-          </Link>
+          {!embedded && (
+            <Link to="/underwriting">
+              <Button variant="ghost" size="icon"><ArrowLeft className="w-4 h-4" /></Button>
+            </Link>
+          )}
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">AI Underwriting Review</h1>
