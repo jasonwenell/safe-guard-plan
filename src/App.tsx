@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PersonaProvider } from "@/contexts/PersonaContext";
 import { WorkflowProvider } from "@/contexts/WorkflowContext";
+import { RfpProvider } from "@/contexts/RfpContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 // Kept pages
