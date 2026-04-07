@@ -70,14 +70,19 @@ export default function RatingEngine() {
                       <span className="text-sm font-medium text-foreground">{s.name}</span>
                       <span className="text-xs text-muted-foreground">{s.contractBasis}</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <RateBox label="Manual Rate" value={s.manualRate ? `$${s.manualRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
-                      <RateBox label="Experience Rate" value={s.experienceRate ? `$${s.experienceRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
-                      <RateBox label="Final Rate" value={s.finalRate ? `$${s.finalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" highlight />
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                      <RateBox label="Specific Rate" value={s.specificFinalRate ? `$${s.specificFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
+                      <RateBox label="Aggregate Rate" value={s.aggregateFinalRate ? `$${s.aggregateFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <RateBox label="Composite Rate" value={s.compositeFinalRate ? `$${s.compositeFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" highlight />
+                      <RateBox label="Total Annual" value={s.totalAnnualPremium ? `$${s.totalAnnualPremium.toLocaleString()}` : '—'} sub="Premium" highlight />
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground pt-1 border-t">
-                      <span>Annual Premium (est.): <strong className="text-foreground">${s.finalRate ? (s.finalRate * 285 * 12).toLocaleString() : '—'}</strong></span>
                       <span>UW Adj: {s.uwAdjustmentFactor}x</span>
+                      {s.rateCapPercent && <span>Rate Cap: {s.rateCapPercent}%</span>}
+                      {s.noNewLasers && <span className="text-primary">NNL ✓</span>}
+                      {s.aggregatingSpecificDeductible && <span>ASD: ${s.aggregatingSpecificDeductible.toLocaleString()}</span>}
                     </div>
                   </div>
                 ))}
@@ -164,22 +169,22 @@ export default function RatingEngine() {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left py-2.5 px-4 text-xs font-medium text-muted-foreground">Scenario</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Manual</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Experience</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Final</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Annual (est.)</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">UW Adj</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Specific</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Aggregate</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Composite</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Annual</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Options</th>
                   </tr>
                 </thead>
                 <tbody>
                   {MOCK_SCENARIOS.map(s => (
                     <tr key={s.id} className="border-b last:border-0">
                       <td className="py-2.5 px-4 font-medium text-foreground text-xs">{s.name}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.manualRate ? `$${s.manualRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.experienceRate ? `$${s.experienceRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs font-bold text-primary">{s.finalRate ? `$${s.finalRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.finalRate ? `$${(s.finalRate * 285 * 12).toLocaleString()}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.uwAdjustmentFactor}x</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.specificFinalRate ? `$${s.specificFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.aggregateFinalRate ? `$${s.aggregateFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs font-bold text-primary">{s.compositeFinalRate ? `$${s.compositeFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.totalAnnualPremium ? `$${s.totalAnnualPremium.toLocaleString()}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{[s.rateCapPercent && `Cap ${s.rateCapPercent}%`, s.noNewLasers && 'NNL', s.aggregatingSpecificDeductible && 'ASD'].filter(Boolean).join(', ') || '—'}</td>
                     </tr>
                   ))}
                 </tbody>

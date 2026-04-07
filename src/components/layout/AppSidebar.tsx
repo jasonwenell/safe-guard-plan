@@ -2,7 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Mail, Users, Layers, Calculator,
   FileOutput, Shield, RefreshCw, BarChart3, Settings, ChevronLeft,
-  ChevronRight, Zap, GitBranch, Upload, BookOpen
+  ChevronRight, Zap, GitBranch, Upload, BookOpen, Activity, Link2,
+  MessageSquare, TrendingUp, Trophy, Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,12 @@ const allNavItems = [
   { label: 'Proposals', icon: FileOutput, path: '/proposals' },
   { label: 'Policies', icon: Shield, path: '/policies' },
   { label: 'Renewals', icon: RefreshCw, path: '/renewals' },
+  { label: 'Claims Experience', icon: Activity, path: '/claims-experience' },
+  { label: 'Binding', icon: Link2, path: '/binding' },
+  { label: 'Communications', icon: MessageSquare, path: '/communications' },
+  { label: 'Renewal Compare', icon: TrendingUp, path: '/renewals/comparison' },
+  { label: 'Win/Loss', icon: Trophy, path: '/win-loss' },
+  { label: 'Carrier Capacity', icon: Building2, path: '/carrier-capacity' },
   { label: 'Analytics', icon: BarChart3, path: '/analytics' },
   { label: 'Rating Manuals', icon: BookOpen, path: '/admin/rating-manuals' },
   { label: 'Admin', icon: Settings, path: '/admin' },

@@ -126,9 +126,13 @@ export default function Proposals() {
               {[
                 { label: 'Contract Basis', values: MOCK_SCENARIOS.map(s => s.contractBasis) },
                 { label: 'Specific Deductible', values: MOCK_SCENARIOS.map(s => `$${s.specificDeductible.toLocaleString()}`) },
-                { label: 'Aggregate Deductible', values: MOCK_SCENARIOS.map(s => s.aggregateDeductible ? `$${s.aggregateDeductible.toLocaleString()}` : '—') },
-                { label: 'Monthly Rate (PEPM)', values: MOCK_SCENARIOS.map(s => s.finalRate ? `$${s.finalRate.toFixed(2)}` : '—') },
-                { label: 'Annual Premium (est.)', values: MOCK_SCENARIOS.map(s => s.finalRate ? `$${(s.finalRate * 285 * 12).toLocaleString()}` : '—') },
+                { label: 'Specific Rate (PEPM)', values: MOCK_SCENARIOS.map(s => s.specificFinalRate ? `$${s.specificFinalRate.toFixed(2)}` : '—') },
+                { label: 'Aggregate Rate (PEPM)', values: MOCK_SCENARIOS.map(s => s.aggregateFinalRate ? `$${s.aggregateFinalRate.toFixed(2)}` : '—') },
+                { label: 'Composite Rate (PEPM)', values: MOCK_SCENARIOS.map(s => s.compositeFinalRate ? `$${s.compositeFinalRate.toFixed(2)}` : '—') },
+                { label: 'Total Annual Premium', values: MOCK_SCENARIOS.map(s => s.totalAnnualPremium ? `$${s.totalAnnualPremium.toLocaleString()}` : '—') },
+                { label: 'Rate Cap', values: MOCK_SCENARIOS.map(s => s.rateCapPercent ? `${s.rateCapPercent}% (+$${s.rateCapPremiumAdder?.toFixed(2)})` : '—') },
+                { label: 'No New Lasers', values: MOCK_SCENARIOS.map(s => s.noNewLasers ? `Yes (+$${s.noNewLaserPremiumAdder?.toFixed(2)})` : 'No') },
+                { label: 'ASD', values: MOCK_SCENARIOS.map(s => s.aggregatingSpecificDeductible ? `$${s.aggregatingSpecificDeductible.toLocaleString()} (-$${s.asdPremiumReduction?.toFixed(2)})` : '—') },
                 { label: 'UW Adjustment', values: MOCK_SCENARIOS.map(s => `${s.uwAdjustmentFactor}x`) },
               ].map(row => (
                 <tr key={row.label} className="border-b last:border-0">
