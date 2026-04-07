@@ -243,7 +243,7 @@ function AssociateDashboard() {
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Census Pending</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/plan-design')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Layers className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-bold">{myWorkflows.length}</p>
