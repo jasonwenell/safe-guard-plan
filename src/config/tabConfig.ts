@@ -1,7 +1,7 @@
 import { PersonaRole } from '@/contexts/PersonaContext';
 import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowInstance } from '@/types/workflow';
 import {
-  FileText, Upload, Users, ClipboardList, Layers, Activity,
+  FileText, Upload, Users, Layers, Activity,
   AlertTriangle, Zap, Calculator, FileOutput, Link2, MessageSquare,
   Trophy, TrendingUp, GitBranch
 } from 'lucide-react';
