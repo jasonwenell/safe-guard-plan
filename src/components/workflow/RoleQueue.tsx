@@ -110,11 +110,13 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
         <span className={workflow.type === 'RENEWAL' ? 'text-info font-medium' : ''}>{workflow.type}</span>
       </div>
 
-      {/* Current step */}
+      {/* Next action */}
       <div className="bg-muted/50 rounded-md p-2.5 flex items-center gap-3">
         <div className="flex items-center gap-1.5 text-sm flex-1">
-          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-medium text-foreground">Step {currentDef.sequenceNumber}: {currentDef.name}</span>
+          <ArrowRight className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs font-medium text-muted-foreground">Next:</span>
+          <span className="font-medium text-foreground">{currentDef.name}</span>
+          <span className="text-[10px] text-muted-foreground font-mono">(Step {currentDef.sequenceNumber})</span>
           {isAiStep && <Sparkles className="w-3 h-3 text-purple-500" />}
         </div>
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
