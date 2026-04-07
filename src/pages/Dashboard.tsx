@@ -1,8 +1,9 @@
 import { MOCK_DASHBOARD_STATS, MOCK_RFPS } from '@/data/mockData';
-import { MOCK_WORKFLOWS, MOCK_TEAM } from '@/data/workflowMockData';
+import { MOCK_TEAM } from '@/data/workflowMockData';
 import { RFPStatus } from '@/types/sleq';
-import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowPhase } from '@/types/workflow';
+import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowPhase, WorkflowInstance } from '@/types/workflow';
 import { StatusBadge, RushBadge } from '@/components/shared/StatusBadges';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
