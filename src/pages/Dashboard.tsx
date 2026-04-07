@@ -184,7 +184,7 @@ function AssistantDashboard() {
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Unread Emails</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/documents')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Upload className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-bold">6</p>
