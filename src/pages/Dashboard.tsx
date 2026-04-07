@@ -285,8 +285,9 @@ function AssociateDashboard() {
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();
-  const todos = getUnderwriterTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf =>
+  const { workflows } = useWorkflow();
+  const todos = getUnderwriterTodos(workflows);
+  const myWorkflows = workflows.filter(wf =>
     wf.assignedUW === 'Juice Montezon' && !['won','lost','declined'].includes(wf.lifecycleState)
   );
 
