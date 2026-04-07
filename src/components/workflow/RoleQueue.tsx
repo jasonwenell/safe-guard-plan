@@ -221,7 +221,8 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
 
 export function RoleQueue({ role }: RoleQueueProps) {
   const config = ROLE_CONFIG[role];
-  const workflows = getMyWorkflows(role);
+  const { workflows: allWorkflows } = useWorkflow();
+  const workflows = getMyWorkflows(role, allWorkflows);
   const team = getTeamForRole(role);
 
   const blocked = workflows.filter(wf => {
