@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_RFPS } from '@/data/mockData';
+import { useRfpContext } from '@/contexts/RfpContext';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
@@ -18,7 +18,8 @@ export function QuoteHeader({ rfpId }: QuoteHeaderProps) {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const { getWorkflow } = useWorkflow();
-  const rfp = MOCK_RFPS.find(r => r.id === rfpId);
+  const { getRfp } = useRfpContext();
+  const rfp = getRfp(rfpId);
   const workflow = getWorkflow(rfpId);
 
   if (!rfp) return null;

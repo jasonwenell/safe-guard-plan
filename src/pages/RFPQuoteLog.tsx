@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_RFPS } from '@/data/mockData';
+import { useRfpContext } from '@/contexts/RfpContext';
 import { MOCK_QUOTABILITY_SCORES } from '@/data/underwritingMockData';
 import { RFP, RFPStatus, STATUS_LABELS } from '@/types/sleq';
 import { StatusBadge, RushBadge, DuplicateBadge, AIBadge, TypeBadge, CensusStatusPill, SetupStatusPill } from '@/components/shared/StatusBadges';
@@ -16,8 +16,9 @@ export default function RFPQuoteLog() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const navigate = useNavigate();
+  const { rfps } = useRfpContext();
 
-  const filtered = MOCK_RFPS.filter(rfp => {
+  const filtered = rfps.filter(rfp => {
     const matchesSearch = search === '' || 
       rfp.groupName.toLowerCase().includes(search.toLowerCase()) ||
       rfp.caseNumber.toString().includes(search) ||
@@ -154,9 +155,9 @@ export default function RFPQuoteLog() {
 
       {/* Status Bar */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground px-1">
-        <span>{MOCK_RFPS.filter(r => r.status !== RFPStatus.DECLINED && r.status !== RFPStatus.LOST && r.status !== RFPStatus.WON).length} Active</span>
+        <span>{rfps.filter(r => r.status !== RFPStatus.DECLINED && r.status !== RFPStatus.LOST && r.status !== RFPStatus.WON).length} Active</span>
         <span>•</span>
-        <span>{MOCK_RFPS.filter(r => r.isRush).length} Rush</span>
+        <span>{rfps.filter(r => r.isRush).length} Rush</span>
         <span>•</span>
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-destructive" /> Not Started

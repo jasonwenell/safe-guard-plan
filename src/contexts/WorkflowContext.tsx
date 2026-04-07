@@ -3,9 +3,23 @@ import { WorkflowInstance, WorkflowStepInstance, StepStatus, WORKFLOW_STEP_DEFS,
 import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
 import { toast } from 'sonner';
 
+interface CreateWorkflowInput {
+  rfpId: string;
+  groupName: string;
+  caseNumber: number;
+  tpaCode: string;
+  tpaName: string;
+  producerName: string;
+  employeeCount: number;
+  effectiveDate: string;
+  type: 'NEW' | 'RENEWAL';
+  isRush: boolean;
+}
+
 interface WorkflowContextType {
   workflows: WorkflowInstance[];
   getWorkflow: (rfpId: string) => WorkflowInstance | undefined;
+  createWorkflow: (input: CreateWorkflowInput) => WorkflowInstance;
   completeStep: (workflowId: string, stepId: string) => void;
   advanceToNextStep: (workflowId: string) => void;
   blockStep: (workflowId: string, stepId: string, reason: string) => void;
@@ -62,6 +76,40 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
   const getWorkflow = useCallback((rfpId: string) => {
     return workflows.find(w => w.rfpId === rfpId);
   }, [workflows]);
+
+  const createWorkflow = useCallback((input: CreateWorkflowInput): WorkflowInstance => {
+    const wfId = `wf-${Date.now()}`;
+    const steps: WorkflowStepInstance[] = WORKFLOW_STEP_DEFS.map((def, i) => ({
+      stepId: def.id,
+      status: i === 0 ? StepStatus.IN_PROGRESS : StepStatus.NOT_STARTED,
+      slaStatus: 'on_track' as const,
+      aiCompleted: false,
+      startedAt: i === 0 ? new Date().toISOString() : undefined,
+    }));
+
+    const wf: WorkflowInstance = {
+      id: wfId,
+      rfpId: input.rfpId,
+      groupName: input.groupName,
+      caseNumber: input.caseNumber,
+      tpaCode: input.tpaCode,
+      tpaName: input.tpaName,
+      producerName: input.producerName,
+      employeeCount: input.employeeCount,
+      effectiveDate: input.effectiveDate,
+      type: input.type,
+      isRush: input.isRush,
+      currentPhase: WorkflowPhase.ASSISTANT_INTAKE,
+      currentStepId: 'STEP_01',
+      overallPercent: 0,
+      lifecycleState: 'intake',
+      steps,
+      startedAt: new Date().toISOString(),
+    };
+
+    setWorkflows(prev => [wf, ...prev]);
+    return wf;
+  }, []);
 
   const updateWorkflow = useCallback((workflowId: string, updater: (wf: WorkflowInstance) => WorkflowInstance) => {
     setWorkflows(prev => prev.map(wf => wf.id === workflowId ? updater({ ...wf, steps: wf.steps.map(s => ({ ...s })) }) : wf));
@@ -192,6 +240,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     <WorkflowContext.Provider value={{
       workflows,
       getWorkflow,
+      createWorkflow,
       completeStep,
       advanceToNextStep,
       blockStep,
