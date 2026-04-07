@@ -169,8 +169,9 @@ function TodoList({ tasks, navigate }: { tasks: TodoTask[]; navigate: (path: str
 // ─── Role Dashboards ─────────────────────────────────────────
 function AssistantDashboard() {
   const navigate = useNavigate();
-  const todos = getAssistantTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
+  const { workflows } = useWorkflow();
+  const todos = getAssistantTodos(workflows);
+  const myWorkflows = workflows.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
 
   return (
     <div className="p-6 lg:p-8 space-y-5">
