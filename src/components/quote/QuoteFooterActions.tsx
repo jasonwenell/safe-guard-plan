@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { PersonaRole } from '@/contexts/PersonaContext';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { WorkflowInstance, WorkflowPhase, WORKFLOW_STEP_DEFS, StepStatus } from '@/types/workflow';
 import { Save, Send, Sparkles, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,6 +11,8 @@ interface QuoteFooterActionsProps {
 }
 
 export function QuoteFooterActions({ role, workflow }: QuoteFooterActionsProps) {
+  const { handoff } = useWorkflow();
+
   const intakeComplete = workflow?.steps
     .filter(s => WORKFLOW_STEP_DEFS.find(d => d.id === s.stepId)?.phase === WorkflowPhase.ASSISTANT_INTAKE)
     .every(s => s.status === StepStatus.COMPLETE) ?? false;
@@ -24,27 +27,27 @@ export function QuoteFooterActions({ role, workflow }: QuoteFooterActionsProps) 
         <Save className="w-4 h-4" /> Save
       </Button>
 
-      {role === 'ASSISTANT' && (
+      {role === 'ASSISTANT' && workflow && (
         <Button
           className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
           disabled={!intakeComplete}
-          onClick={() => toast.success('Handed off to Associate')}
+          onClick={() => handoff(workflow.id, 'associate')}
         >
           <Send className="w-4 h-4" /> Hand Off to Associate →
         </Button>
       )}
 
-      {role === 'ASSOCIATE' && (
+      {role === 'ASSOCIATE' && workflow && (
         <Button
           className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
           disabled={!setupComplete}
-          onClick={() => toast.success('Handed off to Underwriter')}
+          onClick={() => handoff(workflow.id, 'underwriter')}
         >
           <Send className="w-4 h-4" /> Hand Off to Underwriter →
         </Button>
       )}
 
-      {role === 'UNDERWRITER' && (
+      {role === 'UNDERWRITER' && workflow && (
         <>
           <Button
             variant="outline"
