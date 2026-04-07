@@ -113,7 +113,7 @@ function getUnderwriterTodos(workflows: WorkflowInstance[]): TodoTask[] {
     });
   });
   // AI review items
-  const aiSteps = MOCK_WORKFLOWS.flatMap(wf =>
+  const aiSteps = workflows.flatMap(wf =>
     wf.steps.filter(s => s.aiCompleted && s.status === StepStatus.COMPLETE).length > 5
       ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/quote/${wf.rfpId}?tab=ai-package`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
       : []
