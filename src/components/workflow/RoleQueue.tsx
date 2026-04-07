@@ -113,7 +113,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
         </div>
         <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
           <Clock className="w-3 h-3" />
-          <span>{currentDef.slaMinutes ? `~${Math.round(currentDef.slaMinutes / 60)}h` : '~1h'}</span>
+          <span>{currentDef.slaHours ? `~${currentDef.slaHours}h` : '~1h'}</span>
         </div>
         <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
           <User className="w-3 h-3" />
