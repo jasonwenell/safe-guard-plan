@@ -142,7 +142,7 @@ export const MOCK_RFPS: RFP[] = [
   {
     id: 'rfp-new-1', caseNumber: 24012, groupName: 'Valley Medical Group', carrierId: 'c2', carrierName: 'Tokio Marine HCC',
     tpaId: 't1', tpaCode: 'JPF', tpaName: 'JP Farley Corporation', producerId: 'p7', producerName: 'Lockton Companies',
-    status: RFPStatus.UNDERWRITING, type: 'NEW', isRush: true, isDuplicate: false,
+    status: RFPStatus.IN_UNDERWRITING, type: 'NEW', isRush: true, isDuplicate: false,
     assignedUWId: 'u3', assignedUWName: 'Juice Montezon', assignedAssociateId: 'u6', assignedAssociateName: 'Angie Vollhaber',
     effectiveDate: '2026-08-01', receivedDate: '2026-03-25', requestDate: '2026-04-01', tpacDate: '2026-04-01',
     censusStatus: CensusReadyStatus.MEMBER_CENSUS, riskAssessmentStatus: SetupTaskStatus.ENTERED,
