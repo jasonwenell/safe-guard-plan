@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_RFPS } from '@/data/mockData';
+import { useRfpContext } from '@/contexts/RfpContext';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';

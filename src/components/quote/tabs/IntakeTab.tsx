@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { MOCK_RFPS, MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
+import { useNavigate } from 'react-router-dom';
+import { useRfpContext } from '@/contexts/RfpContext';
+import { useWorkflow } from '@/contexts/WorkflowContext';
+import { MOCK_CARRIERS, MOCK_TPAS, MOCK_PRODUCERS } from '@/data/mockData';
+import { RFP, RFPStatus, CensusReadyStatus, SetupTaskStatus } from '@/types/sleq';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Save, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Save, Sparkles, CheckCircle2, PlusCircle } from 'lucide-react';
 import { StepActionBanner } from '@/components/workflow/StepActionBanner';
+import { toast } from 'sonner';
 
 const aiHighlight = "ring-2 ring-amber-300 border-amber-400 bg-amber-50/60";
 const aiAccepted = "ring-1 ring-green-300 border-green-300 bg-green-50/40";
@@ -35,11 +40,27 @@ interface IntakeTabProps {
 }
 
 export function IntakeTab({ rfpId }: IntakeTabProps) {
-  const rfp = rfpId ? MOCK_RFPS.find(r => r.id === rfpId) : null;
+  const { getRfp, addRfp, getNextCaseNumber } = useRfpContext();
+  const { createWorkflow } = useWorkflow();
+  const navigate = useNavigate();
+
+  const rfp = rfpId ? getRfp(rfpId) : null;
   const isNew = !rfp;
   const [isRush, setIsRush] = useState(rfp?.isRush ?? false);
   const [acceptedFields, setAcceptedFields] = useState<Set<string>>(new Set());
   const hasAi = !isNew;
+
+  // Form state for new quotes
+  const [groupName, setGroupName] = useState(rfp?.groupName ?? '');
+  const [sicCode, setSicCode] = useState(rfp?.sicCode ?? '');
+  const [state, setState] = useState(rfp?.state ?? '');
+  const [employeeCount, setEmployeeCount] = useState<number>(rfp?.employeeCount ?? 0);
+  const [tpaId, setTpaId] = useState(rfp?.tpaId ?? '');
+  const [producerId, setProducerId] = useState(rfp?.producerId ?? '');
+  const [carrierId, setCarrierId] = useState(rfp?.carrierId ?? 'c1');
+  const [effectiveDate, setEffectiveDate] = useState(rfp?.effectiveDate ?? '');
+  const [quoteType, setQuoteType] = useState<'NEW' | 'RENEWAL'>(rfp?.type ?? 'NEW');
+  const [setupNotes, setSetupNotes] = useState(rfp?.setupNotes ?? '');
 
   const toggleAccept = (field: string) => {
     setAcceptedFields(prev => {
@@ -55,6 +76,81 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
 
   const aiClass = (field: string) => acceptedFields.has(field) ? aiAccepted : (hasAi ? aiHighlight : '');
 
+  const handleCreateQuote = () => {
+    if (!groupName.trim()) {
+      toast.error('Group Name is required');
+      return;
+    }
+    if (!tpaId) {
+      toast.error('TPA is required');
+      return;
+    }
+    if (!producerId) {
+      toast.error('Producer is required');
+      return;
+    }
+    if (!effectiveDate) {
+      toast.error('Effective Date is required');
+      return;
+    }
+
+    const caseNumber = getNextCaseNumber();
+    const newId = `rfp-${Date.now()}`;
+    const tpa = MOCK_TPAS.find(t => t.id === tpaId);
+    const producer = MOCK_PRODUCERS.find(p => p.id === producerId);
+    const carrier = MOCK_CARRIERS.find(c => c.id === carrierId);
+
+    const newRfp: RFP = {
+      id: newId,
+      caseNumber,
+      groupName: groupName.trim(),
+      carrierId,
+      carrierName: carrier?.name ?? '',
+      tpaId,
+      tpaCode: tpa?.code ?? '',
+      tpaName: tpa?.name ?? '',
+      producerId,
+      producerName: producer?.name ?? '',
+      status: RFPStatus.INTAKE,
+      type: quoteType,
+      isRush,
+      isDuplicate: false,
+      effectiveDate,
+      receivedDate: new Date().toISOString().split('T')[0],
+      requestDate: new Date().toISOString().split('T')[0],
+      tpacDate: new Date().toISOString().split('T')[0],
+      censusStatus: CensusReadyStatus.WAITING,
+      riskAssessmentStatus: SetupTaskStatus.NOT_STARTED,
+      sobStatus: SetupTaskStatus.NOT_STARTED,
+      ratingSystemStatus: SetupTaskStatus.NOT_STARTED,
+      setupComplete: false,
+      sicCode,
+      employeeCount: employeeCount || undefined,
+      state: state || undefined,
+      setupNotes: setupNotes || undefined,
+      isLocked: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    addRfp(newRfp);
+
+    createWorkflow({
+      rfpId: newId,
+      groupName: newRfp.groupName,
+      caseNumber,
+      tpaCode: tpa?.code ?? '',
+      tpaName: tpa?.name ?? '',
+      producerName: producer?.name ?? '',
+      employeeCount: employeeCount || 0,
+      effectiveDate,
+      type: quoteType,
+      isRush,
+    });
+
+    toast.success(`Quote #${caseNumber} created for ${groupName}`);
+    navigate(`/quote/${newId}?tab=intake`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Step Action Banner */}
@@ -65,10 +161,12 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
         <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-medium text-amber-800">
-            {isNew ? 'Upload documents to extract data automatically.' : 'AI auto-populated fields from intake. Review highlighted values below.'}
+            {isNew ? 'Fill in quote details below, then click Create Quote.' : 'AI auto-populated fields from intake. Review highlighted values below.'}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100" onClick={acceptAll}>Accept All</Button>
+        {!isNew && (
+          <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100" onClick={acceptAll}>Accept All</Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -78,21 +176,21 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
           <CardContent className="space-y-4">
             <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('groupName')}>
               <AiFieldLabel label="Group Name" required aiPopulated={hasAi && !!rfp?.groupName} accepted={acceptedFields.has('groupName')} />
-              <Input defaultValue={rfp?.groupName ?? ''} placeholder="Enter group name" className={aiClass('groupName')} />
+              <Input value={groupName} onChange={e => setGroupName(e.target.value)} placeholder="Enter group name" className={aiClass('groupName')} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('sicCode')}>
                 <AiFieldLabel label="SIC Code" required aiPopulated={hasAi && !!rfp?.sicCode} accepted={acceptedFields.has('sicCode')} />
-                <Input defaultValue={rfp?.sicCode ?? ''} placeholder="e.g. 3559" className={aiClass('sicCode')} />
+                <Input value={sicCode} onChange={e => setSicCode(e.target.value)} placeholder="e.g. 3559" className={aiClass('sicCode')} />
               </div>
               <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('state')}>
                 <AiFieldLabel label="State" aiPopulated={hasAi && !!rfp?.state} accepted={acceptedFields.has('state')} />
-                <Input readOnly defaultValue={rfp?.state ?? ''} className={`bg-muted/50 ${aiClass('state')}`} />
+                <Input value={state} onChange={e => setState(e.target.value)} placeholder="e.g. MN" className={aiClass('state')} />
               </div>
             </div>
             <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('employees')}>
               <AiFieldLabel label="Employees" aiPopulated={hasAi && !!rfp?.employeeCount} accepted={acceptedFields.has('employees')} />
-              <Input type="number" defaultValue={rfp?.employeeCount ?? ''} className={aiClass('employees')} />
+              <Input type="number" value={employeeCount || ''} onChange={e => setEmployeeCount(parseInt(e.target.value) || 0)} className={aiClass('employees')} />
             </div>
           </CardContent>
         </Card>
@@ -103,7 +201,7 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
           <CardContent className="space-y-4">
             <div className={`space-y-1.5 ${hasAi ? 'cursor-pointer' : ''}`} onClick={() => hasAi && toggleAccept('tpa')}>
               <AiFieldLabel label="TPA" required aiPopulated={hasAi && !!rfp?.tpaId} accepted={acceptedFields.has('tpa')} />
-              <Select defaultValue={rfp?.tpaId ?? undefined}>
+              <Select value={tpaId} onValueChange={setTpaId}>
                 <SelectTrigger className={aiClass('tpa')}><SelectValue placeholder="Select TPA..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_TPAS.filter(t => t.isActive).map(t => (
@@ -114,7 +212,7 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
             </div>
             <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('producer')}>
               <AiFieldLabel label="Producer" required aiPopulated={hasAi && !!rfp?.producerId} accepted={acceptedFields.has('producer')} />
-              <Select defaultValue={rfp?.producerId ?? undefined}>
+              <Select value={producerId} onValueChange={setProducerId}>
                 <SelectTrigger className={aiClass('producer')}><SelectValue placeholder="Select Producer..." /></SelectTrigger>
                 <SelectContent>
                   {MOCK_PRODUCERS.filter(p => p.isActive).map(p => (
@@ -125,7 +223,7 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
             </div>
             <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('carrier')}>
               <AiFieldLabel label="Carrier" required aiPopulated={hasAi && !!rfp?.carrierId} accepted={acceptedFields.has('carrier')} />
-              <Select defaultValue={rfp?.carrierId ?? 'c1'}>
+              <Select value={carrierId} onValueChange={setCarrierId}>
                 <SelectTrigger className={aiClass('carrier')}><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {MOCK_CARRIERS.map(c => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
@@ -142,7 +240,7 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('effectiveDate')}>
                 <AiFieldLabel label="Effective Date" required aiPopulated={hasAi && !!rfp?.effectiveDate} accepted={acceptedFields.has('effectiveDate')} />
-                <Input type="date" defaultValue={rfp?.effectiveDate ?? ''} className={aiClass('effectiveDate')} />
+                <Input type="date" value={effectiveDate} onChange={e => setEffectiveDate(e.target.value)} className={aiClass('effectiveDate')} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Received Date</Label>
@@ -153,7 +251,7 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5" onClick={() => hasAi && toggleAccept('type')}>
                 <AiFieldLabel label="Type" required aiPopulated={hasAi && !!rfp?.type} accepted={acceptedFields.has('type')} />
-                <Select defaultValue={rfp?.type ?? 'NEW'}>
+                <Select value={quoteType} onValueChange={(v) => setQuoteType(v as 'NEW' | 'RENEWAL')}>
                   <SelectTrigger className={aiClass('type')}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="NEW">New Business</SelectItem>
@@ -192,11 +290,20 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
             <Separator />
             <div className="space-y-1.5">
               <Label className="text-xs">Setup Notes</Label>
-              <Textarea defaultValue={rfp?.setupNotes ?? ''} placeholder="Notes about setup progress..." rows={3} />
+              <Textarea value={setupNotes} onChange={e => setSetupNotes(e.target.value)} placeholder="Notes about setup progress..." rows={3} />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Create Quote Button for new quotes */}
+      {isNew && (
+        <div className="flex justify-end pt-2">
+          <Button size="lg" className="gap-2" onClick={handleCreateQuote}>
+            <PlusCircle className="w-5 h-5" /> Create Quote
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
