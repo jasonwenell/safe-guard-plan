@@ -1,13 +1,13 @@
 import { cn } from '@/lib/utils';
 import { WorkflowInstance, StepStatus, WorkflowPhase, WORKFLOW_STEP_DEFS, PHASE_COLORS, PHASE_LABELS } from '@/types/workflow';
-import { MOCK_WORKFLOWS, MOCK_TEAM } from '@/data/workflowMockData';
+import { MOCK_TEAM } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { Sparkles, AlertTriangle, ArrowRight, Check, Clock, Eye, Play, Send, User, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { useState } from 'react';
 
 type Role = 'ASSISTANT' | 'ASSOCIATE' | 'UNDERWRITER';
