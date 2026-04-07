@@ -70,14 +70,19 @@ export default function RatingEngine() {
                       <span className="text-sm font-medium text-foreground">{s.name}</span>
                       <span className="text-xs text-muted-foreground">{s.contractBasis}</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <RateBox label="Manual Rate" value={s.manualRate ? `$${s.manualRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
-                      <RateBox label="Experience Rate" value={s.experienceRate ? `$${s.experienceRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
-                      <RateBox label="Final Rate" value={s.finalRate ? `$${s.finalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" highlight />
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                      <RateBox label="Specific Rate" value={s.specificFinalRate ? `$${s.specificFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
+                      <RateBox label="Aggregate Rate" value={s.aggregateFinalRate ? `$${s.aggregateFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <RateBox label="Composite Rate" value={s.compositeFinalRate ? `$${s.compositeFinalRate.toFixed(2)}` : '—'} sub="Per Member/Mo" highlight />
+                      <RateBox label="Total Annual" value={s.totalAnnualPremium ? `$${s.totalAnnualPremium.toLocaleString()}` : '—'} sub="Premium" highlight />
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground pt-1 border-t">
-                      <span>Annual Premium (est.): <strong className="text-foreground">${s.finalRate ? (s.finalRate * 285 * 12).toLocaleString() : '—'}</strong></span>
                       <span>UW Adj: {s.uwAdjustmentFactor}x</span>
+                      {s.rateCapPercent && <span>Rate Cap: {s.rateCapPercent}%</span>}
+                      {s.noNewLasers && <span className="text-primary">NNL ✓</span>}
+                      {s.aggregatingSpecificDeductible && <span>ASD: ${s.aggregatingSpecificDeductible.toLocaleString()}</span>}
                     </div>
                   </div>
                 ))}
