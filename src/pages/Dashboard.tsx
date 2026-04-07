@@ -87,9 +87,9 @@ function getAssociateTodos(workflows: WorkflowInstance[]): TodoTask[] {
   return tasks.sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
 }
 
-function getUnderwriterTodos(): TodoTask[] {
+function getUnderwriterTodos(workflows: WorkflowInstance[]): TodoTask[] {
   const tasks: TodoTask[] = [];
-  MOCK_WORKFLOWS.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
+  workflows.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     const currentStep = wf.steps.find(s => s.stepId === wf.currentStepId);
     if (!currentDef || !currentStep) return;
