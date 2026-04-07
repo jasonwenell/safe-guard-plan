@@ -3,6 +3,7 @@ import { MOCK_RFPS } from '@/data/mockData';
 import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
+import { WORKFLOW_STEP_DEFS } from '@/types/workflow';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
