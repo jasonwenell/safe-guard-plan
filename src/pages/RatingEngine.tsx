@@ -169,11 +169,11 @@ export default function RatingEngine() {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left py-2.5 px-4 text-xs font-medium text-muted-foreground">Scenario</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Manual</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Experience</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Final</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Annual (est.)</th>
-                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">UW Adj</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Specific</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Aggregate</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Composite</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Annual</th>
+                    <th className="text-right py-2.5 px-4 text-xs font-medium text-muted-foreground">Options</th>
                   </tr>
                 </thead>
                 <tbody>
