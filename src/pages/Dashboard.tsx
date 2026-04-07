@@ -236,7 +236,7 @@ function AssociateDashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/census')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <Users className="w-5 h-5 text-teal-600 mb-1" />
             <p className="text-2xl font-bold">3</p>
