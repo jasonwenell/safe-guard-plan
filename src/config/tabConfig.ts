@@ -23,8 +23,7 @@ export const WORKSPACE_TABS: WorkspaceTab[] = [
   { id: 'documents', label: 'Documents', icon: Upload, roles: ['ASSISTANT', 'ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_02'], showStatusIcon: true, showForNewQuote: true },
   // Phase 2: Setup
   { id: 'census', label: 'Census', icon: Users, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_07'], showStatusIcon: true, showForNewQuote: false },
-  { id: 'benefits', label: 'Benefits', icon: ClipboardList, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_08'], showStatusIcon: true, showForNewQuote: false },
-  { id: 'plan-stack', label: 'Plan Stack', icon: Layers, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_09', 'STEP_10'], showStatusIcon: true, showForNewQuote: false },
+  { id: 'plan-stack', label: 'Plan Stack', icon: Layers, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_08', 'STEP_09', 'STEP_10'], showStatusIcon: true, showForNewQuote: false },
   { id: 'claims', label: 'Claims', icon: Activity, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_11'], showStatusIcon: true, showForNewQuote: false },
   { id: 'risk', label: 'Risk', icon: AlertTriangle, roles: ['ASSOCIATE', 'UNDERWRITER', 'MASTER'], workflowSteps: ['STEP_12'], showStatusIcon: true, showForNewQuote: false },
   // Phase 3: Underwriting
