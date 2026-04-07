@@ -2,32 +2,43 @@ import { useWorkflow } from '@/contexts/WorkflowContext';
 import { WORKFLOW_STEP_DEFS, StepStatus, WorkflowPhase } from '@/types/workflow';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, AlertTriangle, ArrowRight, Sparkles, Play, Send, Clock } from 'lucide-react';
+import { Check, AlertTriangle, ArrowRight, Sparkles, Play, Send, Clock, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useSearchParams } from 'react-router-dom';
 import { getDefaultTabForStep } from '@/config/tabConfig';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 interface StepActionBannerProps {
   rfpId: string;
-  /** Which workflow step IDs this tab handles */
   tabStepIds: string[];
 }
 
 export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const { getWorkflow, completeAndAdvance, blockStep, unblockStep, handoff } = useWorkflow();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const [showBlockInput, setShowBlockInput] = useState(false);
   const [blockReason, setBlockReason] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showHandoffConfirm, setShowHandoffConfirm] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const workflow = getWorkflow(rfpId);
   if (!workflow) return null;
 
-  // Find the active step for this tab
   const activeStepId = tabStepIds.find(sid => sid === workflow.currentStepId);
   if (!activeStepId) {
-    // Check if all tab steps are complete
     const allComplete = tabStepIds.every(sid => {
       const step = workflow.steps.find(s => s.stepId === sid);
       return step?.status === StepStatus.COMPLETE;
@@ -51,7 +62,6 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const isOverdue = stepInstance.slaStatus === 'overdue';
   const isAi = stepDef.aiAutomatable;
 
-  // Check if this is the last step in the phase (handoff point)
   const isLastInPhase =
     (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE && stepDef.sequenceNumber === 6) ||
     (stepDef.phase === WorkflowPhase.ASSOCIATE_SETUP && stepDef.sequenceNumber === 12);
@@ -63,13 +73,19 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
     }
   };
 
-  const handleComplete = () => {
-    // Find next step before completing
+  const handleSave = () => {
+    setSaved(true);
+    toast.success(`Progress saved for Step ${stepDef.sequenceNumber}: ${stepDef.shortName}`);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleCompleteConfirmed = () => {
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === activeStepId);
     const nextSeq = currentDef ? currentDef.sequenceNumber + 1 : null;
     const nextDef = nextSeq ? WORKFLOW_STEP_DEFS.find(d => d.sequenceNumber === nextSeq) : null;
     completeAndAdvance(workflow.id, activeStepId);
     navigateToNextStep(nextDef?.id || null);
+    setShowConfirm(false);
   };
 
   const handleBlock = () => {
@@ -84,7 +100,7 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
     unblockStep(workflow.id, activeStepId);
   };
 
-  const handleHandoff = () => {
+  const handleHandoffConfirmed = () => {
     if (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE) {
       handoff(workflow.id, 'associate');
       const firstAssocStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.ASSOCIATE_SETUP);
@@ -94,88 +110,139 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
       const firstUwStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.UNDERWRITER_RATING);
       navigateToNextStep(firstUwStep?.id || null);
     }
+    setShowHandoffConfirm(false);
   };
 
+  const handoffTarget = stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE ? 'Associate' : 'UW';
+
   return (
-    <div className={cn(
-      'rounded-lg px-4 py-3 mb-4 border',
-      isBlocked ? 'bg-orange-50 border-orange-200' :
-      isOverdue ? 'bg-destructive/5 border-destructive/30' :
-      'bg-primary/5 border-primary/20'
-    )}>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <ArrowRight className={cn('w-4 h-4 shrink-0', isBlocked ? 'text-orange-600' : 'text-primary')} />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-foreground">
-                Step {stepDef.sequenceNumber}: {stepDef.shortName}
-              </span>
-              {isAi && <Sparkles className="w-3.5 h-3.5 text-purple-500" />}
-              {isOverdue && (
-                <Badge variant="destructive" className="text-[10px] h-5 animate-pulse">OVERDUE</Badge>
-              )}
-              {isBlocked && (
-                <Badge variant="outline" className="text-[10px] h-5 border-orange-300 text-orange-700 bg-orange-100">BLOCKED</Badge>
+    <>
+      <div className={cn(
+        'rounded-lg px-4 py-3 mb-4 border',
+        isBlocked ? 'bg-orange-50 border-orange-200' :
+        isOverdue ? 'bg-destructive/5 border-destructive/30' :
+        'bg-primary/5 border-primary/20'
+      )}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
+            <ArrowRight className={cn('w-4 h-4 shrink-0', isBlocked ? 'text-orange-600' : 'text-primary')} />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-semibold text-foreground">
+                  Step {stepDef.sequenceNumber}: {stepDef.shortName}
+                </span>
+                {isAi && <Sparkles className="w-3.5 h-3.5 text-purple-500" />}
+                {isOverdue && (
+                  <Badge variant="destructive" className="text-[10px] h-5 animate-pulse">OVERDUE</Badge>
+                )}
+                {isBlocked && (
+                  <Badge variant="outline" className="text-[10px] h-5 border-orange-300 text-orange-700 bg-orange-100">BLOCKED</Badge>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">{stepDef.description}</p>
+              {isBlocked && stepInstance.blockedReason && (
+                <p className="text-xs text-orange-600 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {stepInstance.blockedReason}
+                </p>
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">{stepDef.description}</p>
-            {isBlocked && stepInstance.blockedReason && (
-              <p className="text-xs text-orange-600 mt-1 flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3" /> {stepInstance.blockedReason}
-              </p>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {stepDef.slaHours > 0 && (
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <Clock className="w-3 h-3" /> ~{stepDef.slaHours}h SLA
+              </span>
+            )}
+
+            {isBlocked ? (
+              <Button size="sm" variant="outline" className="text-xs h-7 gap-1 border-orange-200 text-orange-700 hover:bg-orange-50" onClick={handleUnblock}>
+                <Play className="w-3 h-3" /> Unblock
+              </Button>
+            ) : (
+              <>
+                {!showBlockInput && (
+                  <Button size="sm" variant="ghost" className="text-xs h-7 text-muted-foreground" onClick={() => setShowBlockInput(true)}>
+                    <AlertTriangle className="w-3 h-3 mr-1" /> Block
+                  </Button>
+                )}
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={cn("text-xs h-7 gap-1", saved && "border-emerald-300 text-emerald-700")}
+                  onClick={handleSave}
+                >
+                  {saved ? <Check className="w-3 h-3" /> : <Save className="w-3 h-3" />}
+                  {saved ? 'Saved' : 'Save'}
+                </Button>
+
+                {isLastInPhase ? (
+                  <Button size="sm" className="text-xs h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setShowHandoffConfirm(true)}>
+                    <Send className="w-3 h-3" />
+                    Handoff → {handoffTarget}
+                  </Button>
+                ) : (
+                  <Button size="sm" className="text-xs h-7 gap-1" onClick={() => setShowConfirm(true)}>
+                    <Check className="w-3 h-3" /> Complete Step
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          {stepDef.slaHours > 0 && (
-            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-              <Clock className="w-3 h-3" /> ~{stepDef.slaHours}h SLA
-            </span>
-          )}
-
-          {isBlocked ? (
-            <Button size="sm" variant="outline" className="text-xs h-7 gap-1 border-orange-200 text-orange-700 hover:bg-orange-50" onClick={handleUnblock}>
-              <Play className="w-3 h-3" /> Unblock
-            </Button>
-          ) : (
-            <>
-              {!showBlockInput && (
-                <Button size="sm" variant="ghost" className="text-xs h-7 text-muted-foreground" onClick={() => setShowBlockInput(true)}>
-                  <AlertTriangle className="w-3 h-3 mr-1" /> Block
-                </Button>
-              )}
-
-              {isLastInPhase ? (
-                <Button size="sm" className="text-xs h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleHandoff}>
-                  <Send className="w-3 h-3" />
-                  Handoff → {stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE ? 'Associate' : 'UW'}
-                </Button>
-              ) : (
-                <Button size="sm" className="text-xs h-7 gap-1" onClick={handleComplete}>
-                  <Check className="w-3 h-3" /> Complete Step
-                </Button>
-              )}
-            </>
-          )}
-        </div>
+        {showBlockInput && !isBlocked && (
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+            <Input
+              placeholder="Reason for blocking..."
+              className="text-xs h-7 flex-1"
+              value={blockReason}
+              onChange={(e) => setBlockReason(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleBlock()}
+              autoFocus
+            />
+            <Button size="sm" variant="outline" className="text-xs h-7" onClick={handleBlock}>Confirm Block</Button>
+            <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => { setShowBlockInput(false); setBlockReason(''); }}>Cancel</Button>
+          </div>
+        )}
       </div>
 
-      {showBlockInput && !isBlocked && (
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
-          <Input
-            placeholder="Reason for blocking..."
-            className="text-xs h-7 flex-1"
-            value={blockReason}
-            onChange={(e) => setBlockReason(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleBlock()}
-            autoFocus
-          />
-          <Button size="sm" variant="outline" className="text-xs h-7" onClick={handleBlock}>Confirm Block</Button>
-          <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => { setShowBlockInput(false); setBlockReason(''); }}>Cancel</Button>
-        </div>
-      )}
-    </div>
+      {/* Complete Step Confirmation */}
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Complete Step {stepDef.sequenceNumber}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Mark <span className="font-medium text-foreground">"{stepDef.shortName}"</span> as complete and advance to the next step. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCompleteConfirmed}>
+              <Check className="w-4 h-4 mr-1" /> Confirm Complete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Handoff Confirmation */}
+      <AlertDialog open={showHandoffConfirm} onOpenChange={setShowHandoffConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Handoff to {handoffTarget}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will mark all remaining steps in this phase as complete and transfer the quote to the {handoffTarget} queue. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleHandoffConfirmed} className="bg-emerald-600 hover:bg-emerald-700">
+              <Send className="w-4 h-4 mr-1" /> Confirm Handoff
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
