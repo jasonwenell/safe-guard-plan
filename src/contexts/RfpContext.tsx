@@ -17,8 +17,23 @@ export function useRfpContext() {
   return ctx;
 }
 
+const RFP_STORAGE_KEY = 'sleq_rfps';
+
+function loadRfps(): RFP[] {
+  try {
+    const stored = localStorage.getItem(RFP_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return [...MOCK_RFPS];
+}
+
 export function RfpProvider({ children }: { children: ReactNode }) {
-  const [rfps, setRfps] = useState<RFP[]>(() => [...MOCK_RFPS]);
+  const [rfps, setRfps] = useState<RFP[]>(loadRfps);
+
+  // Persist on change
+  React.useEffect(() => {
+    localStorage.setItem(RFP_STORAGE_KEY, JSON.stringify(rfps));
+  }, [rfps]);
 
   const getRfp = useCallback((id: string) => rfps.find(r => r.id === id), [rfps]);
 

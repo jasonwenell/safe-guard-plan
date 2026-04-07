@@ -68,10 +68,23 @@ function lifecycleFromPhase(phase: WorkflowPhase, allComplete: boolean): string 
   }
 }
 
+const WF_STORAGE_KEY = 'sleq_workflows';
+
+function loadWorkflows(): WorkflowInstance[] {
+  try {
+    const stored = localStorage.getItem(WF_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return JSON.parse(JSON.stringify(MOCK_WORKFLOWS));
+}
+
 export function WorkflowProvider({ children }: { children: ReactNode }) {
-  const [workflows, setWorkflows] = useState<WorkflowInstance[]>(() =>
-    JSON.parse(JSON.stringify(MOCK_WORKFLOWS)) // deep clone
-  );
+  const [workflows, setWorkflows] = useState<WorkflowInstance[]>(loadWorkflows);
+
+  // Persist on change
+  React.useEffect(() => {
+    localStorage.setItem(WF_STORAGE_KEY, JSON.stringify(workflows));
+  }, [workflows]);
 
   const getWorkflow = useCallback((rfpId: string) => {
     return workflows.find(w => w.rfpId === rfpId);
