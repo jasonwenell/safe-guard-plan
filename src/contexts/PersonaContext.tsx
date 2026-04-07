@@ -21,8 +21,8 @@ export const PERSONAS: Record<PersonaRole, Persona> = {
 export const ROLE_NAV_ACCESS: Record<PersonaRole, string[]> = {
   ASSISTANT: ['/', '/pipeline', '/rfps', '/email-intake', '/documents'],
   ASSOCIATE: ['/', '/pipeline', '/rfps', '/census', '/plan-design', '/documents'],
-  UNDERWRITER: ['/', '/pipeline', '/rfps', '/underwriting', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/analytics'],
-  MASTER: ['/', '/pipeline', '/rfps', '/underwriting', '/email-intake', '/documents', '/census', '/plan-design', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/analytics', '/admin'],
+  UNDERWRITER: ['/', '/pipeline', '/rfps', '/underwriting', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/claims-experience', '/binding', '/communications', '/renewals/comparison', '/win-loss', '/carrier-capacity', '/analytics'],
+  MASTER: ['/', '/pipeline', '/rfps', '/underwriting', '/email-intake', '/documents', '/census', '/plan-design', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/claims-experience', '/binding', '/communications', '/renewals/comparison', '/win-loss', '/carrier-capacity', '/analytics', '/admin'],
 };
 
 interface PersonaContextValue {

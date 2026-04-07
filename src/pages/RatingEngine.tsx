@@ -180,11 +180,11 @@ export default function RatingEngine() {
                   {MOCK_SCENARIOS.map(s => (
                     <tr key={s.id} className="border-b last:border-0">
                       <td className="py-2.5 px-4 font-medium text-foreground text-xs">{s.name}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.manualRate ? `$${s.manualRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.experienceRate ? `$${s.experienceRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs font-bold text-primary">{s.finalRate ? `$${s.finalRate.toFixed(2)}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.finalRate ? `$${(s.finalRate * 285 * 12).toLocaleString()}` : '—'}</td>
-                      <td className="py-2.5 px-4 text-right text-xs">{s.uwAdjustmentFactor}x</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.specificFinalRate ? `$${s.specificFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.aggregateFinalRate ? `$${s.aggregateFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs font-bold text-primary">{s.compositeFinalRate ? `$${s.compositeFinalRate.toFixed(2)}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{s.totalAnnualPremium ? `$${s.totalAnnualPremium.toLocaleString()}` : '—'}</td>
+                      <td className="py-2.5 px-4 text-right text-xs">{[s.rateCapPercent && `Cap ${s.rateCapPercent}%`, s.noNewLasers && 'NNL', s.aggregatingSpecificDeductible && 'ASD'].filter(Boolean).join(', ') || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
