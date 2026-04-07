@@ -225,8 +225,9 @@ function AssistantDashboard() {
 
 function AssociateDashboard() {
   const navigate = useNavigate();
-  const todos = getAssociateTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssociate === 'Heidi Bouma' && !['won','lost','declined'].includes(wf.lifecycleState));
+  const { workflows } = useWorkflow();
+  const todos = getAssociateTodos(workflows);
+  const myWorkflows = workflows.filter(wf => wf.assignedAssociate === 'Heidi Bouma' && !['won','lost','declined'].includes(wf.lifecycleState));
   const blocked = myWorkflows.filter(wf => {
     const s = wf.steps.find(st => st.stepId === wf.currentStepId);
     return s?.status === StepStatus.BLOCKED;
