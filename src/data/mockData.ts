@@ -139,6 +139,28 @@ export const MOCK_RFPS: RFP[] = [
     setupComplete: false, sicCode: '8062', sicDescription: 'General Medical & Surgical Hospitals', employeeCount: 1250, state: 'WI',
     isLocked: false, createdAt: '2026-03-18T09:00:00Z',
   },
+  {
+    id: 'rfp-new-1', caseNumber: 24012, groupName: 'Valley Medical Group', carrierId: 'c2', carrierName: 'Tokio Marine HCC',
+    tpaId: 't1', tpaCode: 'JPF', tpaName: 'JP Farley Corporation', producerId: 'p7', producerName: 'Lockton Companies',
+    status: RFPStatus.IN_UNDERWRITING, type: 'NEW', isRush: true, isDuplicate: false,
+    assignedUWId: 'u3', assignedUWName: 'Juice Montezon', assignedAssociateId: 'u6', assignedAssociateName: 'Angie Vollhaber',
+    effectiveDate: '2026-08-01', receivedDate: '2026-03-25', requestDate: '2026-04-01', tpacDate: '2026-04-01',
+    censusStatus: CensusReadyStatus.MEMBER_CENSUS, riskAssessmentStatus: SetupTaskStatus.ENTERED,
+    sobStatus: SetupTaskStatus.ENTERED, ratingSystemStatus: SetupTaskStatus.ENTERED,
+    setupComplete: true, sicCode: '8011', sicDescription: 'Offices & Clinics of Doctors of Medicine', employeeCount: 52, state: 'CO',
+    aiConfidenceScore: 0.91, isLocked: false, createdAt: '2026-03-25T08:00:00Z',
+  },
+  {
+    id: 'rfp-new-2', caseNumber: 24013, groupName: 'Bright Health Corp', carrierId: 'c1', carrierName: 'Pan American',
+    tpaId: 't2', tpaCode: 'IMS', tpaName: 'Integrated Medical Solutions', producerId: 'p2', producerName: 'Marsh & McLennan',
+    status: RFPStatus.SETUP, type: 'RENEWAL', isRush: false, isDuplicate: false,
+    assignedUWId: 'u4', assignedUWName: 'Jeff Williams', assignedAssociateId: 'u7', assignedAssociateName: 'Polly Brohaugh',
+    effectiveDate: '2026-10-01', receivedDate: '2026-04-01', requestDate: '2026-04-08', tpacDate: '2026-04-08',
+    censusStatus: CensusReadyStatus.EMPLOYEE_CENSUS, riskAssessmentStatus: SetupTaskStatus.RECEIVED,
+    sobStatus: SetupTaskStatus.RECEIVED, ratingSystemStatus: SetupTaskStatus.NOT_STARTED,
+    setupComplete: false, sicCode: '6324', sicDescription: 'Hospital & Medical Service Plans', employeeCount: 320, state: 'IL',
+    isLocked: false, createdAt: '2026-04-01T14:00:00Z',
+  },
 ];
 
 export const MOCK_EMAILS: EmailInbox[] = [
