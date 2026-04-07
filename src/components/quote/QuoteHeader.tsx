@@ -47,19 +47,29 @@ export function QuoteHeader({ rfpId }: QuoteHeaderProps) {
       {/* Condensed tracker: inline progress bar + toggle */}
       {workflow && (
         <div className="space-y-0">
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="w-full flex items-center gap-3 group hover:bg-muted/30 rounded-md px-2 py-1 -mx-2 transition-colors"
-          >
-            <Progress value={workflow.overallPercent} className="h-1.5 flex-1" />
-            <span className="text-xs font-mono font-medium text-muted-foreground whitespace-nowrap">
-              {workflow.overallPercent}%
-            </span>
-            {expanded
-              ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
-              : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-            }
-          </button>
+          {(() => {
+            const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === workflow.currentStepId);
+            return (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full flex items-center gap-3 group hover:bg-muted/30 rounded-md px-2 py-1 -mx-2 transition-colors"
+              >
+                <Progress value={workflow.overallPercent} className="h-1.5 flex-1 max-w-[40%]" />
+                <span className="text-xs font-mono font-medium text-muted-foreground whitespace-nowrap">
+                  {workflow.overallPercent}%
+                </span>
+                {!expanded && currentDef && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[220px]">
+                    <span className="text-foreground font-medium">→ {currentDef.shortName}</span>
+                  </span>
+                )}
+                {expanded
+                  ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground ml-auto shrink-0" />
+                  : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto shrink-0" />
+                }
+              </button>
+            );
+          })()}
 
           <div className={cn(
             'overflow-hidden transition-all duration-200',
