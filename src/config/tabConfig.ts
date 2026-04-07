@@ -80,7 +80,7 @@ export function getDefaultTabForStep(stepId: string): string {
   const map: Record<string, string> = {
     STEP_01: 'intake', STEP_02: 'documents', STEP_03: 'intake',
     STEP_04: 'intake', STEP_05: 'intake', STEP_06: 'intake',
-    STEP_07: 'census', STEP_08: 'benefits', STEP_09: 'plan-stack',
+    STEP_07: 'census', STEP_08: 'plan-stack', STEP_09: 'plan-stack',
     STEP_10: 'plan-stack', STEP_11: 'claims', STEP_12: 'risk',
     STEP_13: 'ai-package', STEP_14: 'plan-stack', STEP_15: 'rating',
     STEP_16: 'ai-package', STEP_17: 'proposals', STEP_18: 'binding',

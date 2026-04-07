@@ -38,7 +38,7 @@ const TAB_COMPONENTS: Record<string, React.ComponentType<{ rfpId?: string }>> = 
   intake: IntakeTab,
   documents: DocumentsTab,
   census: CensusTab,
-  benefits: BenefitsTab,
+  // benefits tab removed — merged into plan-stack
   'plan-stack': PlanStackTab,
   claims: ClaimsTab,
   risk: RiskTab,
