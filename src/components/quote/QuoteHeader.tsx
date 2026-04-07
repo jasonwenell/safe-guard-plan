@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MOCK_RFPS } from '@/data/mockData';
-import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
 import { WORKFLOW_STEP_DEFS } from '@/types/workflow';
