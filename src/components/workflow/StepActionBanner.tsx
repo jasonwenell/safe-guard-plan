@@ -56,8 +56,20 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
     (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE && stepDef.sequenceNumber === 6) ||
     (stepDef.phase === WorkflowPhase.ASSOCIATE_SETUP && stepDef.sequenceNumber === 12);
 
+  const navigateToNextStep = (nextStepId: string | null) => {
+    if (nextStepId) {
+      const nextTab = getDefaultTabForStep(nextStepId);
+      setSearchParams({ tab: nextTab }, { replace: true });
+    }
+  };
+
   const handleComplete = () => {
+    // Find next step before completing
+    const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === activeStepId);
+    const nextSeq = currentDef ? currentDef.sequenceNumber + 1 : null;
+    const nextDef = nextSeq ? WORKFLOW_STEP_DEFS.find(d => d.sequenceNumber === nextSeq) : null;
     completeAndAdvance(workflow.id, activeStepId);
+    navigateToNextStep(nextDef?.id || null);
   };
 
   const handleBlock = () => {
