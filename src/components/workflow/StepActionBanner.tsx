@@ -6,6 +6,8 @@ import { Check, AlertTriangle, ArrowRight, Sparkles, Play, Send, Clock } from 'l
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { useSearchParams } from 'react-router-dom';
+import { getDefaultTabForStep } from '@/config/tabConfig';
 
 interface StepActionBannerProps {
   rfpId: string;
@@ -15,6 +17,7 @@ interface StepActionBannerProps {
 
 export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const { getWorkflow, completeAndAdvance, blockStep, unblockStep, handoff } = useWorkflow();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showBlockInput, setShowBlockInput] = useState(false);
   const [blockReason, setBlockReason] = useState('');
 
@@ -53,8 +56,20 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
     (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE && stepDef.sequenceNumber === 6) ||
     (stepDef.phase === WorkflowPhase.ASSOCIATE_SETUP && stepDef.sequenceNumber === 12);
 
+  const navigateToNextStep = (nextStepId: string | null) => {
+    if (nextStepId) {
+      const nextTab = getDefaultTabForStep(nextStepId);
+      setSearchParams({ tab: nextTab }, { replace: true });
+    }
+  };
+
   const handleComplete = () => {
+    // Find next step before completing
+    const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === activeStepId);
+    const nextSeq = currentDef ? currentDef.sequenceNumber + 1 : null;
+    const nextDef = nextSeq ? WORKFLOW_STEP_DEFS.find(d => d.sequenceNumber === nextSeq) : null;
     completeAndAdvance(workflow.id, activeStepId);
+    navigateToNextStep(nextDef?.id || null);
   };
 
   const handleBlock = () => {
@@ -72,8 +87,12 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const handleHandoff = () => {
     if (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE) {
       handoff(workflow.id, 'associate');
+      const firstAssocStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.ASSOCIATE_SETUP);
+      navigateToNextStep(firstAssocStep?.id || null);
     } else if (stepDef.phase === WorkflowPhase.ASSOCIATE_SETUP) {
       handoff(workflow.id, 'underwriter');
+      const firstUwStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.UNDERWRITER_RATING);
+      navigateToNextStep(firstUwStep?.id || null);
     }
   };
 
