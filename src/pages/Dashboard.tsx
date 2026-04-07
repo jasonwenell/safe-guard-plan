@@ -307,7 +307,7 @@ function UnderwriterDashboard() {
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Ready to Rate</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/proposals')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/rfps')}>
           <CardContent className="p-4">
             <FileText className="w-5 h-5 text-emerald-500 mb-1" />
             <p className="text-2xl font-bold">1</p>
