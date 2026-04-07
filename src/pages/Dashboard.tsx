@@ -148,12 +148,14 @@ function TodoList({ tasks, navigate }: { tasks: TodoTask[]; navigate: (path: str
           )} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">{task.label}</span>
+              <span className="text-sm font-medium text-foreground">
+                {task.groupName ? `${task.groupName} #${task.caseNumber}` : task.label}
+              </span>
               {task.isRush && <span className="text-[10px] font-bold px-1 py-0.5 rounded bg-destructive/15 text-destructive">⚡ RUSH</span>}
               {task.isOverdue && <span className="text-[10px] font-bold px-1 py-0.5 rounded bg-destructive/15 text-destructive animate-pulse">OVERDUE</span>}
             </div>
             <p className="text-xs text-muted-foreground truncate">
-              {task.groupName && `#${task.caseNumber} ${task.groupName} — `}{task.detail}
+              {task.groupName ? `${task.label} — ${task.detail}` : task.detail}
             </p>
           </div>
           <ExternalLink className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
