@@ -24,6 +24,12 @@ import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
 import PipelineDashboard from "./pages/PipelineDashboard";
 import WorkflowDetail from "./pages/WorkflowDetail";
+import ClaimsExperience from "./pages/ClaimsExperience";
+import BindingWorkflow from "./pages/BindingWorkflow";
+import CommunicationLog from "./pages/CommunicationLog";
+import RenewalComparison from "./pages/RenewalComparison";
+import WinLossTracking from "./pages/WinLossTracking";
+import CarrierCapacity from "./pages/CarrierCapacity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +62,12 @@ const App = () => (
               <Route path="/proposals" element={<Proposals />} />
               <Route path="/policies" element={<PolicyAdmin />} />
               <Route path="/renewals" element={<Renewals />} />
+              <Route path="/renewals/comparison" element={<RenewalComparison />} />
+              <Route path="/claims-experience" element={<ClaimsExperience />} />
+              <Route path="/binding" element={<BindingWorkflow />} />
+              <Route path="/communications" element={<CommunicationLog />} />
+              <Route path="/win-loss" element={<WinLossTracking />} />
+              <Route path="/carrier-capacity" element={<CarrierCapacity />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
