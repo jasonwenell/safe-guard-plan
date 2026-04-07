@@ -163,10 +163,10 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1 border-purple-200 text-purple-700 hover:bg-purple-50"
-            onClick={() => handleAction('AI Review')}
+            onClick={handleComplete}
             disabled={acting}
           >
-            <Sparkles className="w-3 h-3" /> AI Review
+            <Sparkles className="w-3 h-3" /> AI Review & Complete
           </Button>
         )}
 
@@ -174,18 +174,18 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
           <Button
             size="sm"
             className="text-xs h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => handleAction(`Handoff to ${role === 'ASSISTANT' ? 'Associate' : 'Underwriter'}`)}
+            onClick={handleHandoff}
             disabled={acting}
           >
             <Send className="w-3 h-3" /> Handoff → {role === 'ASSISTANT' ? 'Associate' : 'UW'}
           </Button>
         )}
 
-        {!isLastStepInPhase && !isBlocked && (
+        {!isLastStepInPhase && !isBlocked && !isAiStep && (
           <Button
             size="sm"
             className="text-xs h-7 gap-1"
-            onClick={() => handleAction('Mark step complete')}
+            onClick={handleComplete}
             disabled={acting}
           >
             <Check className="w-3 h-3" /> Complete Step
@@ -197,7 +197,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1 border-orange-200 text-orange-700 hover:bg-orange-50"
-            onClick={() => handleAction('Unblock')}
+            onClick={handleUnblock}
             disabled={acting}
           >
             <Play className="w-3 h-3" /> Unblock
