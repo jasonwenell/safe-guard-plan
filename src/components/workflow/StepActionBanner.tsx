@@ -87,8 +87,12 @@ export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const handleHandoff = () => {
     if (stepDef.phase === WorkflowPhase.ASSISTANT_INTAKE) {
       handoff(workflow.id, 'associate');
+      const firstAssocStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.ASSOCIATE_SETUP);
+      navigateToNextStep(firstAssocStep?.id || null);
     } else if (stepDef.phase === WorkflowPhase.ASSOCIATE_SETUP) {
       handoff(workflow.id, 'underwriter');
+      const firstUwStep = WORKFLOW_STEP_DEFS.find(d => d.phase === WorkflowPhase.UNDERWRITER_RATING);
+      navigateToNextStep(firstUwStep?.id || null);
     }
   };
 
