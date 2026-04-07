@@ -13,7 +13,7 @@ import { CheckCircle2, Loader2, AlertTriangle, Sparkles, Circle } from 'lucide-r
 import { IntakeTab } from '@/components/quote/tabs/IntakeTab';
 import { DocumentsTab } from '@/components/quote/tabs/DocumentsTab';
 import { CensusTab } from '@/components/quote/tabs/CensusTab';
-import { BenefitsTab } from '@/components/quote/tabs/BenefitsTab';
+// BenefitsTab removed — functionality merged into PlanStackTab
 import { PlanStackTab } from '@/components/quote/tabs/PlanStackTab';
 import { ClaimsTab } from '@/components/quote/tabs/ClaimsTab';
 import { RiskTab } from '@/components/quote/tabs/RiskTab';
