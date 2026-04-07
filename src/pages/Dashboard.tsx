@@ -114,7 +114,7 @@ function getUnderwriterTodos(): TodoTask[] {
   // AI review items
   const aiSteps = MOCK_WORKFLOWS.flatMap(wf =>
     wf.steps.filter(s => s.aiCompleted && s.status === StepStatus.COMPLETE).length > 5
-      ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/workflow/${wf.rfpId}`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
+      ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/quote/${wf.rfpId}?tab=ai-package`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
       : []
   );
   return [...tasks, ...aiSteps].sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
