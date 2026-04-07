@@ -52,6 +52,7 @@ const ROLE_CONFIG: Record<Role, { label: string; icon: React.ReactNode; phaseCol
 
 function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role }) {
   const navigate = useNavigate();
+  const { completeAndAdvance, unblockStep, handoff } = useWorkflow();
   const [acting, setActing] = useState(false);
   const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === workflow.currentStepId);
   const currentStep = workflow.steps.find(s => s.stepId === workflow.currentStepId);
@@ -63,12 +64,24 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
   const isLastStepInPhase = (role === 'ASSISTANT' && currentDef.sequenceNumber === 6) ||
     (role === 'ASSOCIATE' && currentDef.sequenceNumber === 12);
 
-  const handleAction = (action: string) => {
+  const handleComplete = () => {
     setActing(true);
     setTimeout(() => {
+      completeAndAdvance(workflow.id, workflow.currentStepId);
       setActing(false);
-      toast.success(`${action} completed for ${workflow.groupName}`);
-    }, 800);
+    }, 400);
+  };
+
+  const handleUnblock = () => {
+    unblockStep(workflow.id, workflow.currentStepId);
+  };
+
+  const handleHandoff = () => {
+    setActing(true);
+    setTimeout(() => {
+      handoff(workflow.id, role === 'ASSISTANT' ? 'associate' : 'underwriter');
+      setActing(false);
+    }, 400);
   };
 
   const qsColor = (workflow.quotabilityScore || 0) >= 85 ? 'text-emerald-600' :
