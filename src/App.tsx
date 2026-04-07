@@ -62,6 +62,12 @@ const App = () => (
               <Route path="/proposals" element={<Proposals />} />
               <Route path="/policies" element={<PolicyAdmin />} />
               <Route path="/renewals" element={<Renewals />} />
+              <Route path="/renewals/comparison" element={<RenewalComparison />} />
+              <Route path="/claims-experience" element={<ClaimsExperience />} />
+              <Route path="/binding" element={<BindingWorkflow />} />
+              <Route path="/communications" element={<CommunicationLog />} />
+              <Route path="/win-loss" element={<WinLossTracking />} />
+              <Route path="/carrier-capacity" element={<CarrierCapacity />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
