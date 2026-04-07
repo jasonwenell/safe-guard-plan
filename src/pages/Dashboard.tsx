@@ -1,8 +1,9 @@
 import { MOCK_DASHBOARD_STATS, MOCK_RFPS } from '@/data/mockData';
-import { MOCK_WORKFLOWS, MOCK_TEAM } from '@/data/workflowMockData';
+import { MOCK_TEAM } from '@/data/workflowMockData';
 import { RFPStatus } from '@/types/sleq';
-import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowPhase } from '@/types/workflow';
+import { StepStatus, WORKFLOW_STEP_DEFS, WorkflowPhase, WorkflowInstance } from '@/types/workflow';
 import { StatusBadge, RushBadge } from '@/components/shared/StatusBadges';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -29,9 +30,9 @@ interface TodoTask {
   isOverdue?: boolean;
 }
 
-function getAssistantTodos(): TodoTask[] {
+function getAssistantTodos(workflows: WorkflowInstance[]): TodoTask[] {
   const tasks: TodoTask[] = [];
-  MOCK_WORKFLOWS.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
+  workflows.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     const currentStep = wf.steps.find(s => s.stepId === wf.currentStepId);
     if (!currentDef || !currentStep) return;
@@ -58,9 +59,9 @@ function getAssistantTodos(): TodoTask[] {
   return tasks.sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
 }
 
-function getAssociateTodos(): TodoTask[] {
+function getAssociateTodos(workflows: WorkflowInstance[]): TodoTask[] {
   const tasks: TodoTask[] = [];
-  MOCK_WORKFLOWS.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
+  workflows.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     const currentStep = wf.steps.find(s => s.stepId === wf.currentStepId);
     if (!currentDef || !currentStep) return;
@@ -86,9 +87,9 @@ function getAssociateTodos(): TodoTask[] {
   return tasks.sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
 }
 
-function getUnderwriterTodos(): TodoTask[] {
+function getUnderwriterTodos(workflows: WorkflowInstance[]): TodoTask[] {
   const tasks: TodoTask[] = [];
-  MOCK_WORKFLOWS.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
+  workflows.filter(wf => !['won','lost','declined'].includes(wf.lifecycleState)).forEach(wf => {
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     const currentStep = wf.steps.find(s => s.stepId === wf.currentStepId);
     if (!currentDef || !currentStep) return;
@@ -112,7 +113,7 @@ function getUnderwriterTodos(): TodoTask[] {
     });
   });
   // AI review items
-  const aiSteps = MOCK_WORKFLOWS.flatMap(wf =>
+  const aiSteps = workflows.flatMap(wf =>
     wf.steps.filter(s => s.aiCompleted && s.status === StepStatus.COMPLETE).length > 5
       ? [{ id: `ai-${wf.id}`, label: 'Review AI decisions', detail: `${wf.groupName} — multiple AI steps need sign-off`, priority: 'medium' as const, route: `/quote/${wf.rfpId}?tab=ai-package`, caseNumber: wf.caseNumber, groupName: wf.groupName }]
       : []
@@ -168,8 +169,9 @@ function TodoList({ tasks, navigate }: { tasks: TodoTask[]; navigate: (path: str
 // ─── Role Dashboards ─────────────────────────────────────────
 function AssistantDashboard() {
   const navigate = useNavigate();
-  const todos = getAssistantTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
+  const { workflows } = useWorkflow();
+  const todos = getAssistantTodos(workflows);
+  const myWorkflows = workflows.filter(wf => wf.assignedAssistant === 'Traci Gamer' && !['won','lost','declined'].includes(wf.lifecycleState));
 
   return (
     <div className="p-6 lg:p-8 space-y-5">
@@ -223,8 +225,9 @@ function AssistantDashboard() {
 
 function AssociateDashboard() {
   const navigate = useNavigate();
-  const todos = getAssociateTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf => wf.assignedAssociate === 'Heidi Bouma' && !['won','lost','declined'].includes(wf.lifecycleState));
+  const { workflows } = useWorkflow();
+  const todos = getAssociateTodos(workflows);
+  const myWorkflows = workflows.filter(wf => wf.assignedAssociate === 'Heidi Bouma' && !['won','lost','declined'].includes(wf.lifecycleState));
   const blocked = myWorkflows.filter(wf => {
     const s = wf.steps.find(st => st.stepId === wf.currentStepId);
     return s?.status === StepStatus.BLOCKED;
@@ -282,8 +285,9 @@ function AssociateDashboard() {
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();
-  const todos = getUnderwriterTodos();
-  const myWorkflows = MOCK_WORKFLOWS.filter(wf =>
+  const { workflows } = useWorkflow();
+  const todos = getUnderwriterTodos(workflows);
+  const myWorkflows = workflows.filter(wf =>
     wf.assignedUW === 'Juice Montezon' && !['won','lost','declined'].includes(wf.lifecycleState)
   );
 

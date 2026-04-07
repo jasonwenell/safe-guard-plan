@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Save, Sparkles, CheckCircle2 } from 'lucide-react';
+import { StepActionBanner } from '@/components/workflow/StepActionBanner';
 
 const aiHighlight = "ring-2 ring-amber-300 border-amber-400 bg-amber-50/60";
 const aiAccepted = "ring-1 ring-green-300 border-green-300 bg-green-50/40";
@@ -56,6 +57,9 @@ export function IntakeTab({ rfpId }: IntakeTabProps) {
 
   return (
     <div className="space-y-6">
+      {/* Step Action Banner */}
+      {rfpId && <StepActionBanner rfpId={rfpId} tabStepIds={['STEP_01', 'STEP_03', 'STEP_04', 'STEP_05', 'STEP_06']} />}
+
       {/* AI Banner */}
       <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-center gap-3">
         <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />

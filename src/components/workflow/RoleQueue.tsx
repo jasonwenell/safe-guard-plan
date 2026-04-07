@@ -1,13 +1,13 @@
 import { cn } from '@/lib/utils';
 import { WorkflowInstance, StepStatus, WorkflowPhase, WORKFLOW_STEP_DEFS, PHASE_COLORS, PHASE_LABELS } from '@/types/workflow';
-import { MOCK_WORKFLOWS, MOCK_TEAM } from '@/data/workflowMockData';
+import { MOCK_TEAM } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { Sparkles, AlertTriangle, ArrowRight, Check, Clock, Eye, Play, Send, User, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { useState } from 'react';
 
 type Role = 'ASSISTANT' | 'ASSOCIATE' | 'UNDERWRITER';
@@ -16,8 +16,8 @@ interface RoleQueueProps {
   role: Role;
 }
 
-function getMyWorkflows(role: Role): WorkflowInstance[] {
-  return MOCK_WORKFLOWS.filter(wf => {
+function getMyWorkflows(role: Role, workflows: WorkflowInstance[]): WorkflowInstance[] {
+  return workflows.filter(wf => {
     if (['won', 'lost', 'declined'].includes(wf.lifecycleState)) return false;
     const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === wf.currentStepId);
     if (!currentDef) return false;
@@ -52,6 +52,7 @@ const ROLE_CONFIG: Record<Role, { label: string; icon: React.ReactNode; phaseCol
 
 function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role }) {
   const navigate = useNavigate();
+  const { completeAndAdvance, unblockStep, handoff } = useWorkflow();
   const [acting, setActing] = useState(false);
   const currentDef = WORKFLOW_STEP_DEFS.find(d => d.id === workflow.currentStepId);
   const currentStep = workflow.steps.find(s => s.stepId === workflow.currentStepId);
@@ -63,12 +64,24 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
   const isLastStepInPhase = (role === 'ASSISTANT' && currentDef.sequenceNumber === 6) ||
     (role === 'ASSOCIATE' && currentDef.sequenceNumber === 12);
 
-  const handleAction = (action: string) => {
+  const handleComplete = () => {
     setActing(true);
     setTimeout(() => {
+      completeAndAdvance(workflow.id, workflow.currentStepId);
       setActing(false);
-      toast.success(`${action} completed for ${workflow.groupName}`);
-    }, 800);
+    }, 400);
+  };
+
+  const handleUnblock = () => {
+    unblockStep(workflow.id, workflow.currentStepId);
+  };
+
+  const handleHandoff = () => {
+    setActing(true);
+    setTimeout(() => {
+      handoff(workflow.id, role === 'ASSISTANT' ? 'associate' : 'underwriter');
+      setActing(false);
+    }, 400);
   };
 
   const qsColor = (workflow.quotabilityScore || 0) >= 85 ? 'text-emerald-600' :
@@ -150,10 +163,10 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1 border-purple-200 text-purple-700 hover:bg-purple-50"
-            onClick={() => handleAction('AI Review')}
+            onClick={handleComplete}
             disabled={acting}
           >
-            <Sparkles className="w-3 h-3" /> AI Review
+            <Sparkles className="w-3 h-3" /> AI Review & Complete
           </Button>
         )}
 
@@ -161,18 +174,18 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
           <Button
             size="sm"
             className="text-xs h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => handleAction(`Handoff to ${role === 'ASSISTANT' ? 'Associate' : 'Underwriter'}`)}
+            onClick={handleHandoff}
             disabled={acting}
           >
             <Send className="w-3 h-3" /> Handoff → {role === 'ASSISTANT' ? 'Associate' : 'UW'}
           </Button>
         )}
 
-        {!isLastStepInPhase && !isBlocked && (
+        {!isLastStepInPhase && !isBlocked && !isAiStep && (
           <Button
             size="sm"
             className="text-xs h-7 gap-1"
-            onClick={() => handleAction('Mark step complete')}
+            onClick={handleComplete}
             disabled={acting}
           >
             <Check className="w-3 h-3" /> Complete Step
@@ -184,7 +197,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1 border-orange-200 text-orange-700 hover:bg-orange-50"
-            onClick={() => handleAction('Unblock')}
+            onClick={handleUnblock}
             disabled={acting}
           >
             <Play className="w-3 h-3" /> Unblock
@@ -208,7 +221,8 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
 
 export function RoleQueue({ role }: RoleQueueProps) {
   const config = ROLE_CONFIG[role];
-  const workflows = getMyWorkflows(role);
+  const { workflows: allWorkflows } = useWorkflow();
+  const workflows = getMyWorkflows(role, allWorkflows);
   const team = getTeamForRole(role);
 
   const blocked = workflows.filter(wf => {

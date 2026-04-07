@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PersonaProvider } from "@/contexts/PersonaContext";
+import { WorkflowProvider } from "@/contexts/WorkflowContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 // Kept pages
@@ -29,6 +30,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <PersonaProvider>
+        <WorkflowProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -63,6 +65,7 @@ const App = () => (
             </Routes>
           </AppLayout>
         </BrowserRouter>
+        </WorkflowProvider>
       </PersonaProvider>
     </TooltipProvider>
   </QueryClientProvider>

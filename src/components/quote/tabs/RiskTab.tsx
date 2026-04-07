@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Save } from 'lucide-react';
+import { StepActionBanner } from '@/components/workflow/StepActionBanner';
 
 interface RiskTabProps {
   rfpId?: string;
@@ -12,6 +13,7 @@ interface RiskTabProps {
 export function RiskTab({ rfpId }: RiskTabProps) {
   return (
     <div className="space-y-6">
+      {rfpId && <StepActionBanner rfpId={rfpId} tabStepIds={['STEP_12']} />}
       <Card className="border shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">

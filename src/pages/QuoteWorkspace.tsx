@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { usePersona } from '@/contexts/PersonaContext';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { MOCK_RFPS } from '@/data/mockData';
-import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
 import { getTabsForRole, getTabStatus, getDefaultTab, type TabStatusType } from '@/config/tabConfig';
 import { QuoteHeader } from '@/components/quote/QuoteHeader';
 import { QuoteFooterActions } from '@/components/quote/QuoteFooterActions';
@@ -57,8 +57,10 @@ export default function QuoteWorkspace() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { role } = usePersona();
 
+  const { getWorkflow } = useWorkflow();
+
   const rfp = id ? MOCK_RFPS.find(r => r.id === id) : null;
-  const workflow = id ? MOCK_WORKFLOWS.find(w => w.rfpId === id) : undefined;
+  const workflow = id ? getWorkflow(id) : undefined;
   const isNew = !rfp;
   const isRenewal = rfp?.type === 'RENEWAL';
 

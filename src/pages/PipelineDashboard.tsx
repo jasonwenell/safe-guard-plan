@@ -4,7 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
 import { RoleQueue } from '@/components/workflow/RoleQueue';
-import { MOCK_WORKFLOWS, MOCK_PIPELINE_STATS, MOCK_BOTTLENECKS, MOCK_TEAM, MOCK_AI_IMPACT } from '@/data/workflowMockData';
+import { MOCK_PIPELINE_STATS, MOCK_BOTTLENECKS, MOCK_TEAM, MOCK_AI_IMPACT } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { ArrowRight, AlertTriangle, Sparkles, Users, TrendingUp, Clock, CheckCircle2, XCircle, UserCheck, Briefcase, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -13,11 +14,12 @@ import { usePersona } from '@/contexts/PersonaContext';
 export default function PipelineDashboard() {
   const navigate = useNavigate();
   const { role } = usePersona();
+  const { workflows } = useWorkflow();
   const stats = MOCK_PIPELINE_STATS;
   const aiImpact = MOCK_AI_IMPACT;
 
   // Sort workflows: overdue first, then by percent descending
-  const activeWorkflows = MOCK_WORKFLOWS
+  const activeWorkflows = workflows
     .filter(w => !['won', 'lost', 'declined'].includes(w.lifecycleState))
     .sort((a, b) => {
       const aOverdue = a.steps.some(s => s.slaStatus === 'overdue');

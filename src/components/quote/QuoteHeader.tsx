@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MOCK_RFPS } from '@/data/mockData';
-import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { StatusBadge, RushBadge, TypeBadge } from '@/components/shared/StatusBadges';
 import { QuoteTracker } from '@/components/workflow/QuoteTracker';
 import { WORKFLOW_STEP_DEFS } from '@/types/workflow';
@@ -17,8 +17,9 @@ interface QuoteHeaderProps {
 export function QuoteHeader({ rfpId }: QuoteHeaderProps) {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
+  const { getWorkflow } = useWorkflow();
   const rfp = MOCK_RFPS.find(r => r.id === rfpId);
-  const workflow = MOCK_WORKFLOWS.find(w => w.rfpId === rfpId);
+  const workflow = getWorkflow(rfpId);
 
   if (!rfp) return null;
 
