@@ -198,7 +198,7 @@ function QueueItem({ workflow, role }: { workflow: WorkflowInstance; role: Role 
             size="sm"
             variant="outline"
             className="text-xs h-7 gap-1"
-            onClick={() => navigate(`/underwriting/${workflow.rfpId}`)}
+            onClick={() => navigate(`/quote/${workflow.rfpId}?tab=ai-package`)}
           >
             <Zap className="w-3 h-3" /> Open UW
           </Button>

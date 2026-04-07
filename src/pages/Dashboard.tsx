@@ -427,7 +427,7 @@ function MasterDashboard() {
                 </thead>
                 <tbody>
                   {recentRFPs.map((rfp) => (
-                    <tr key={rfp.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/rfps/${rfp.id}`)}>
+                    <tr key={rfp.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/quote/${rfp.id}`)}>
                       <td className="py-2.5 px-4 font-mono text-xs">{rfp.caseNumber}</td>
                       <td className="py-2.5 px-4">
                         <div className="flex items-center gap-2">
