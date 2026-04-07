@@ -68,6 +68,7 @@ const App = () => (
           </AppLayout>
         </BrowserRouter>
         </WorkflowProvider>
+        </RfpProvider>
       </PersonaProvider>
     </TooltipProvider>
   </QueryClientProvider>

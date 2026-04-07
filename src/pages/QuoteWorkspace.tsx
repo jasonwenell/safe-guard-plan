@@ -58,8 +58,9 @@ export default function QuoteWorkspace() {
   const { role } = usePersona();
 
   const { getWorkflow } = useWorkflow();
+  const { getRfp } = useRfpContext();
 
-  const rfp = id ? MOCK_RFPS.find(r => r.id === id) : null;
+  const rfp = id ? getRfp(id) : null;
   const workflow = id ? getWorkflow(id) : undefined;
   const isNew = !rfp;
   const isRenewal = rfp?.type === 'RENEWAL';

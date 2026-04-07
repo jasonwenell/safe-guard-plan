@@ -3,9 +3,23 @@ import { WorkflowInstance, WorkflowStepInstance, StepStatus, WORKFLOW_STEP_DEFS,
 import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
 import { toast } from 'sonner';
 
+interface CreateWorkflowInput {
+  rfpId: string;
+  groupName: string;
+  caseNumber: number;
+  tpaCode: string;
+  tpaName: string;
+  producerName: string;
+  employeeCount: number;
+  effectiveDate: string;
+  type: 'NEW' | 'RENEWAL';
+  isRush: boolean;
+}
+
 interface WorkflowContextType {
   workflows: WorkflowInstance[];
   getWorkflow: (rfpId: string) => WorkflowInstance | undefined;
+  createWorkflow: (input: CreateWorkflowInput) => WorkflowInstance;
   completeStep: (workflowId: string, stepId: string) => void;
   advanceToNextStep: (workflowId: string) => void;
   blockStep: (workflowId: string, stepId: string, reason: string) => void;
