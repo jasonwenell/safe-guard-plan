@@ -17,8 +17,9 @@ import {
   CheckCircle2, XCircle, Save, TrendingUp, TrendingDown, Info, Target
 } from 'lucide-react';
 
-export default function AIUnderwriting() {
-  const { rfpId } = useParams();
+export default function AIUnderwriting({ rfpId: rfpIdProp, embedded }: { rfpId?: string; embedded?: boolean }) {
+  const { rfpId: rfpIdParam } = useParams();
+  const rfpId = rfpIdProp || rfpIdParam;
   const rfp = MOCK_RFPS.find(r => r.id === rfpId);
   const quotabilityScore = rfpId ? MOCK_QUOTABILITY_SCORES[rfpId] : undefined;
   const [quotePackage, setQuotePackage] = useState<AIQuotePackage | null>(
@@ -27,8 +28,15 @@ export default function AIUnderwriting() {
   const [uwNotes, setUwNotes] = useState('');
   const [selectedDecisions, setSelectedDecisions] = useState<Record<string, string>>({});
 
-  // If no rfpId, show the queue view
+  // If no rfpId, show the queue view (only when not embedded)
   if (!rfpId || !rfp) {
+    if (embedded) {
+      return (
+        <div className="text-center py-12 text-muted-foreground">
+          <p>No AI underwriting data available for this quote.</p>
+        </div>
+      );
+    }
     return <AIUnderwritingQueue />;
   }
 
