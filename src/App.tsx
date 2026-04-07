@@ -5,32 +5,23 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PersonaProvider } from "@/contexts/PersonaContext";
 import { AppLayout } from "@/components/layout/AppLayout";
+
+// Kept pages
 import Dashboard from "./pages/Dashboard";
+import PipelineDashboard from "./pages/PipelineDashboard";
 import RFPQuoteLog from "./pages/RFPQuoteLog";
-import RFPDetail from "./pages/RFPDetail";
 import EmailIntake from "./pages/EmailIntake";
 import EmailDetail from "./pages/EmailDetail";
-import DocumentUpload from "./pages/DocumentUpload";
-import CensusProcessing from "./pages/CensusProcessing";
-import PlanDesign from "./pages/PlanDesign";
-import RatingEngine from "./pages/RatingEngine";
-import RatingManualManager from "./pages/RatingManualManager";
 import FactorLookup from "./pages/FactorLookup";
-import AIUnderwriting from "./pages/AIUnderwriting";
-import Proposals from "./pages/Proposals";
+import RatingManualManager from "./pages/RatingManualManager";
 import PolicyAdmin from "./pages/PolicyAdmin";
-import Renewals from "./pages/Renewals";
 import Analytics from "./pages/Analytics";
-import Admin from "./pages/Admin";
-import PipelineDashboard from "./pages/PipelineDashboard";
-import WorkflowDetail from "./pages/WorkflowDetail";
-import ClaimsExperience from "./pages/ClaimsExperience";
-import BindingWorkflow from "./pages/BindingWorkflow";
-import CommunicationLog from "./pages/CommunicationLog";
-import RenewalComparison from "./pages/RenewalComparison";
-import WinLossTracking from "./pages/WinLossTracking";
 import CarrierCapacity from "./pages/CarrierCapacity";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+
+// NEW: The Quote Workspace (replaces 12+ standalone pages)
+import QuoteWorkspace from "./pages/QuoteWorkspace";
 
 const queryClient = new QueryClient();
 
@@ -43,33 +34,31 @@ const App = () => (
         <BrowserRouter>
           <AppLayout>
             <Routes>
+              {/* Home & Pipeline */}
               <Route path="/" element={<Dashboard />} />
               <Route path="/pipeline" element={<PipelineDashboard />} />
-              <Route path="/workflow/:rfpId" element={<WorkflowDetail />} />
+
+              {/* Quote List & Workspace */}
               <Route path="/rfps" element={<RFPQuoteLog />} />
-              <Route path="/rfps/new" element={<RFPDetail />} />
-              <Route path="/rfps/:id" element={<RFPDetail />} />
+              <Route path="/quote/new" element={<QuoteWorkspace />} />
+              <Route path="/quote/:id" element={<QuoteWorkspace />} />
+
+              {/* Email Intake (standalone) */}
               <Route path="/email-intake" element={<EmailIntake />} />
               <Route path="/email-intake/:id" element={<EmailDetail />} />
-              <Route path="/documents" element={<DocumentUpload />} />
-              <Route path="/census" element={<CensusProcessing />} />
-              <Route path="/plan-design" element={<PlanDesign />} />
-              <Route path="/underwriting" element={<AIUnderwriting />} />
-              <Route path="/underwriting/:rfpId" element={<AIUnderwriting />} />
-              <Route path="/rating" element={<RatingEngine />} />
-              <Route path="/rating-manual" element={<FactorLookup />} />
-              <Route path="/admin/rating-manuals" element={<RatingManualManager />} />
-              <Route path="/proposals" element={<Proposals />} />
+
+              {/* UW Reference Tools (standalone) */}
+              <Route path="/factor-lookup" element={<FactorLookup />} />
+
+              {/* Policy List (standalone) */}
               <Route path="/policies" element={<PolicyAdmin />} />
-              <Route path="/renewals" element={<Renewals />} />
-              <Route path="/renewals/comparison" element={<RenewalComparison />} />
-              <Route path="/claims-experience" element={<ClaimsExperience />} />
-              <Route path="/binding" element={<BindingWorkflow />} />
-              <Route path="/communications" element={<CommunicationLog />} />
-              <Route path="/win-loss" element={<WinLossTracking />} />
-              <Route path="/carrier-capacity" element={<CarrierCapacity />} />
+
+              {/* Analytics & Admin (standalone) */}
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/carrier-capacity" element={<CarrierCapacity />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/rating-manuals" element={<RatingManualManager />} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

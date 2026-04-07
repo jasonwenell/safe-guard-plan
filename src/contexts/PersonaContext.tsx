@@ -17,12 +17,41 @@ export const PERSONAS: Record<PersonaRole, Persona> = {
   MASTER: { role: 'MASTER', label: 'Master Admin', name: 'Admin User', initials: 'AD', title: 'Platform Admin' },
 };
 
-// Navigation items each role can access (paths)
 export const ROLE_NAV_ACCESS: Record<PersonaRole, string[]> = {
-  ASSISTANT: ['/', '/pipeline', '/rfps', '/email-intake', '/documents'],
-  ASSOCIATE: ['/', '/pipeline', '/rfps', '/census', '/plan-design', '/documents'],
-  UNDERWRITER: ['/', '/pipeline', '/rfps', '/underwriting', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/claims-experience', '/binding', '/communications', '/renewals/comparison', '/win-loss', '/carrier-capacity', '/analytics'],
-  MASTER: ['/', '/pipeline', '/rfps', '/underwriting', '/email-intake', '/documents', '/census', '/plan-design', '/rating', '/rating-manual', '/proposals', '/policies', '/renewals', '/claims-experience', '/binding', '/communications', '/renewals/comparison', '/win-loss', '/carrier-capacity', '/analytics', '/admin'],
+  ASSISTANT: [
+    '/',
+    '/pipeline',
+    '/rfps',
+    '/quote',
+    '/email-intake',
+  ],
+  ASSOCIATE: [
+    '/',
+    '/pipeline',
+    '/rfps',
+    '/quote',
+  ],
+  UNDERWRITER: [
+    '/',
+    '/pipeline',
+    '/rfps',
+    '/quote',
+    '/factor-lookup',
+    '/policies',
+    '/analytics',
+  ],
+  MASTER: [
+    '/',
+    '/pipeline',
+    '/rfps',
+    '/quote',
+    '/email-intake',
+    '/factor-lookup',
+    '/policies',
+    '/analytics',
+    '/carrier-capacity',
+    '/admin',
+  ],
 };
 
 interface PersonaContextValue {
@@ -40,7 +69,6 @@ export function PersonaProvider({ children }: { children: ReactNode }) {
 
   const hasAccess = (path: string) => {
     const allowed = ROLE_NAV_ACCESS[role];
-    // Check exact match or prefix match for detail routes
     return allowed.some(p => {
       if (p === '/') return path === '/';
       return path === p || path.startsWith(p + '/');
