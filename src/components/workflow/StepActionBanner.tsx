@@ -6,6 +6,8 @@ import { Check, AlertTriangle, ArrowRight, Sparkles, Play, Send, Clock } from 'l
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { useSearchParams } from 'react-router-dom';
+import { getDefaultTabForStep } from '@/config/tabConfig';
 
 interface StepActionBannerProps {
   rfpId: string;
