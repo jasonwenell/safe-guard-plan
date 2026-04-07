@@ -355,7 +355,7 @@ function MasterDashboard() {
     { label: 'Due Today', value: stats.dueToday, icon: Clock, color: 'text-warning', path: '/rfps' },
     { label: 'Rush Cases', value: stats.rushCases, icon: Zap, color: 'text-destructive', path: '/rfps' },
     { label: 'Pending Setup', value: stats.pendingSetup, icon: ClipboardList, color: 'text-info', path: '/rfps' },
-    { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rating' },
+    { label: 'In Underwriting', value: stats.inUnderwriting, icon: Calculator, color: 'text-primary', path: '/rfps' },
     { label: 'Quoted (Month)', value: stats.quotedThisMonth, icon: TrendingUp, color: 'text-status-quoted', path: '/proposals' },
     { label: 'Won (Month)', value: stats.wonThisMonth, icon: Trophy, color: 'text-success', path: '/policies' },
     { label: 'Avg Days to Quote', value: stats.avgDaysToQuote, icon: Timer, color: 'text-muted-foreground', path: '/analytics' },
