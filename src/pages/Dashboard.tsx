@@ -37,21 +37,24 @@ function getAssistantTodos(): TodoTask[] {
     if (!currentDef || !currentStep) return;
     if (currentDef.phase !== WorkflowPhase.ASSISTANT_INTAKE) return;
 
+    const stepTabMap: Record<string, string> = {
+      STEP_01: 'intake', STEP_02: 'documents', STEP_03: 'intake',
+      STEP_04: 'intake', STEP_05: 'intake', STEP_06: 'intake',
+    };
     tasks.push({
       id: wf.id,
       label: `Step ${currentDef.sequenceNumber}: ${currentDef.shortName}`,
       detail: currentDef.name,
       priority: currentStep.slaStatus === 'overdue' ? 'high' : wf.isRush ? 'high' : 'medium',
-      route: currentDef.sequenceNumber <= 2 ? `/rfps/${wf.rfpId}` : currentDef.sequenceNumber === 2 ? '/documents' : `/rfps/${wf.rfpId}`,
+      route: `/quote/${wf.rfpId}?tab=${stepTabMap[currentDef.id] || 'intake'}`,
       caseNumber: wf.caseNumber,
       groupName: wf.groupName,
       isRush: wf.isRush,
       isOverdue: currentStep.slaStatus === 'overdue',
     });
   });
-  // Add email intake tasks
   tasks.push({ id: 'email-1', label: 'Process new emails', detail: '4 unprocessed emails in inbox', priority: 'medium', route: '/email-intake' });
-  tasks.push({ id: 'doc-1', label: 'Upload documents', detail: '2 cases awaiting document uploads', priority: 'low', route: '/documents' });
+  tasks.push({ id: 'doc-1', label: 'Upload documents', detail: '2 cases awaiting document uploads', priority: 'low', route: '/rfps' });
   return tasks.sort((a, b) => (a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0));
 }
 
