@@ -17,6 +17,7 @@ interface StepActionBannerProps {
 
 export function StepActionBanner({ rfpId, tabStepIds }: StepActionBannerProps) {
   const { getWorkflow, completeAndAdvance, blockStep, unblockStep, handoff } = useWorkflow();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showBlockInput, setShowBlockInput] = useState(false);
   const [blockReason, setBlockReason] = useState('');
 
