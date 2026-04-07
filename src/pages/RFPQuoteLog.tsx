@@ -35,7 +35,7 @@ export default function RFPQuoteLog() {
           <h1 className="text-2xl font-bold text-foreground">RFP Quote Log</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} cases</p>
         </div>
-        <Link to="/rfps/new">
+        <Link to="/quote/new">
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
             New RFP
