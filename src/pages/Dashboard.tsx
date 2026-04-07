@@ -95,9 +95,9 @@ function getUnderwriterTodos(): TodoTask[] {
     if (currentDef.phase !== WorkflowPhase.UNDERWRITER_RATING) return;
 
     const routeMap: Record<string, string> = {
-      STEP_13: `/underwriting/${wf.rfpId}`, STEP_14: '/plan-design',
-      STEP_15: '/rating', STEP_16: `/underwriting/${wf.rfpId}`,
-      STEP_17: '/proposals', STEP_18: '/policies',
+      STEP_13: `/quote/${wf.rfpId}?tab=ai-package`, STEP_14: `/quote/${wf.rfpId}?tab=plan-stack`,
+      STEP_15: `/quote/${wf.rfpId}?tab=rating`, STEP_16: `/quote/${wf.rfpId}?tab=ai-package`,
+      STEP_17: `/quote/${wf.rfpId}?tab=proposals`, STEP_18: `/quote/${wf.rfpId}?tab=binding`,
     };
     tasks.push({
       id: wf.id,
