@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { ExpandedTracker } from '@/components/workflow/ExpandedTracker';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -7,7 +7,8 @@ import { ArrowLeft } from 'lucide-react';
 export default function WorkflowDetail() {
   const { rfpId } = useParams();
   const navigate = useNavigate();
-  const workflow = MOCK_WORKFLOWS.find(w => w.rfpId === rfpId);
+  const { getWorkflow } = useWorkflow();
+  const workflow = rfpId ? getWorkflow(rfpId) : undefined;
 
   if (!workflow) {
     return (

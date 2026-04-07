@@ -19,7 +19,7 @@ export default function PipelineDashboard() {
   const aiImpact = MOCK_AI_IMPACT;
 
   // Sort workflows: overdue first, then by percent descending
-  const activeWorkflows = MOCK_WORKFLOWS
+  const activeWorkflows = workflows
     .filter(w => !['won', 'lost', 'declined'].includes(w.lifecycleState))
     .sort((a, b) => {
       const aOverdue = a.steps.some(s => s.slaStatus === 'overdue');

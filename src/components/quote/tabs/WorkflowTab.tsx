@@ -1,4 +1,4 @@
-import { MOCK_WORKFLOWS } from '@/data/workflowMockData';
+import { useWorkflow } from '@/contexts/WorkflowContext';
 import { ExpandedTracker } from '@/components/workflow/ExpandedTracker';
 
 interface WorkflowTabProps {
@@ -6,7 +6,8 @@ interface WorkflowTabProps {
 }
 
 export function WorkflowTab({ rfpId }: WorkflowTabProps) {
-  const workflow = MOCK_WORKFLOWS.find(w => w.rfpId === rfpId);
+  const { getWorkflow } = useWorkflow();
+  const workflow = rfpId ? getWorkflow(rfpId) : undefined;
 
   if (!workflow) {
     return (
