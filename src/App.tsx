@@ -24,6 +24,12 @@ import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
 import PipelineDashboard from "./pages/PipelineDashboard";
 import WorkflowDetail from "./pages/WorkflowDetail";
+import ClaimsExperience from "./pages/ClaimsExperience";
+import BindingWorkflow from "./pages/BindingWorkflow";
+import CommunicationLog from "./pages/CommunicationLog";
+import RenewalComparison from "./pages/RenewalComparison";
+import WinLossTracking from "./pages/WinLossTracking";
+import CarrierCapacity from "./pages/CarrierCapacity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
