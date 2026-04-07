@@ -67,8 +67,9 @@ function getAssociateTodos(): TodoTask[] {
     if (currentDef.phase !== WorkflowPhase.ASSOCIATE_SETUP) return;
 
     const routeMap: Record<string, string> = {
-      STEP_07: '/census', STEP_08: '/plan-design', STEP_09: '/plan-design',
-      STEP_10: '/plan-design', STEP_11: '/rating', STEP_12: `/underwriting/${wf.rfpId}`,
+      STEP_07: `/quote/${wf.rfpId}?tab=census`, STEP_08: `/quote/${wf.rfpId}?tab=benefits`,
+      STEP_09: `/quote/${wf.rfpId}?tab=plan-stack`, STEP_10: `/quote/${wf.rfpId}?tab=plan-stack`,
+      STEP_11: `/quote/${wf.rfpId}?tab=claims`, STEP_12: `/quote/${wf.rfpId}?tab=risk`,
     };
     tasks.push({
       id: wf.id,
