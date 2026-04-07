@@ -16,8 +16,9 @@ export default function RFPQuoteLog() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const navigate = useNavigate();
+  const { rfps } = useRfpContext();
 
-  const filtered = MOCK_RFPS.filter(rfp => {
+  const filtered = rfps.filter(rfp => {
     const matchesSearch = search === '' || 
       rfp.groupName.toLowerCase().includes(search.toLowerCase()) ||
       rfp.caseNumber.toString().includes(search) ||
